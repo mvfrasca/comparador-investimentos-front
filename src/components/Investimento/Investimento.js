@@ -6,8 +6,13 @@ class Investimento extends Component {
     constructor(props){
         super(props);
         this.state = {
-            dataFinal: "",              // 01/09/2018
-            dataInicial: "",            // 01/09/2014
+            tipoInvestimento: props.investimento.tipoInvestimento,
+            valInvestimentoInicial: props.investimento.valInvestimentoInicial,
+            indexador: props.investimento.indexador,
+            taxa: props.investimento.taxa,
+            dataInicial: props.investimento.dataInicial,
+            dataFinal: props.investimento.dataFinal,
+
             evolucao: [
                 // {
                 //     data: "",           // 2014-09-01
@@ -15,23 +20,19 @@ class Investimento extends Component {
                 //     valor: 0,           // 25255.68
                 // }
             ],
-            indexador: "",              // IPCA
             percIOF: 0,                 // 0
             percImpostoRenda: 0,        // 15
             rentabilidadeBruta: 0,      // 14891.36
             rentabilidadeLiquida: 0,    // 12657.656
-            taxa: 0,                    // 5.57
-            tipoInvestimento: "",       // CDB
             valIOF: 0,                  // 0
             valImpostoRenda: 0,         // 2233.704
-            valInvestimentoInicial: 0,  // 25000
             valSaldoBruto: 0,           // 39891.36
             valSaldoLiquido: 0          // 37657.656
         }
     }
 
     componentDidMount(){
-        calcularInvestimento(this.props.tipoInvestimento, this.props.valor, this.props.indexador, this.props.taxa, this.props.dataInicial, this.props.dataFinal)
+        calcularInvestimento(this.state.tipoInvestimento, this.state.valInvestimentoInicial, this.state.indexador, this.state.taxa, this.state.dataInicial, this.state.dataFinal)
             .then(dados => {
                 this.setState({
                     dataFinal: dados.body.resultadoInvestimento.dataInicial,
