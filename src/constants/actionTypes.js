@@ -1,0 +1,2 @@
+export const RECEBER_INVESTIMENTOS = 'investimentos.RECEBER_INVESTIMENTOS';
+export const CALCULAR_INVESTIMENTO = 'investimentos.CALCULAR_INVESTIMENTO';

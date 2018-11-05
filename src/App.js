@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import MenuSuperior from './components/MenuSuperior/MenuSuperior';
 import StatusAPI from './components/StatusAPI/StatusAPI';
-import Comparacao from './components/Comparacao/Comparacao';
+import Comparacao from './containers/Comparacao';
 import { Switch, Route } from 'react-router-dom';
 
 class App extends Component {

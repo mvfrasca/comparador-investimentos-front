@@ -1,35 +1,23 @@
 import React, { Component } from 'react';
-import Investimento from '../Investimento/Investimento';
+import { connect } from 'react-redux';
+import Investimento from './../components/Investimento/Investimento';
+import * as investimentosActions from '../store/investimentos/actions';
+import * as investimentosSelectors from '../store/investimentos/reducer';
 
 class Comparacao extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            investimentos: [
-                {
-                    tipoInvestimento: "poupanca",
-                    valInvestimentoInicial: 25000,
-                    indexador: "poupanca",
-                    taxa: 0,
-                    dataInicial: "01/09/2014",
-                    dataFinal: "01/09/2018"
-                },
-                {
-                    tipoInvestimento: "cdb",
-                    valInvestimentoInicial: 25000,
-                    indexador: "ipca",
-                    taxa: 5.57,
-                    dataInicial: "01/09/2014",
-                    dataFinal: "01/09/2018"
-                }
-            ]
+            investimentos: []
         }
     }
 
+    componentDidMount() {
+        investimentosActions.consultarInvestimentos();
+        investimentosActions.calcularInvestimento(0);
+    }
 
-    // componentDidMount() {
-
-    // }
+    atualizarInvestimento
 
     render() {
         return (
@@ -52,6 +40,7 @@ class Comparacao extends Component {
                     <div className="col">
                         < Investimento
                             investimento={this.state.investimentos[0]}
+                            onAddToCartClicked={() => addToCart(0)} />
                         />
                     </div>
                     <div className="col">
@@ -64,6 +53,13 @@ class Comparacao extends Component {
         )
 
     }
+
 }
 
-export default Comparacao;
+function mapStateToProps(store) {
+    return {
+        investimentos: store.investimentos.investimentosList,
+    };
+}
+
+export default connect(mapStateToProps)(Comparacao);

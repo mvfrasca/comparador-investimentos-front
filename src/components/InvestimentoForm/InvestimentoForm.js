@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-//import { calcularInvestimento } from "../../services/investimento";
+import { getIndexadores } from "../../services/investimento";
 import Modal from 'react-modal';
 
 const customStyles = {
@@ -15,24 +15,63 @@ const customStyles = {
 
 class InvestimentoForm extends Component {
     constructor(props) {
+        console.log("InvestimentoForm.constructor")
         super(props);
         this.state = {
-            investimento: {
-                tipoInvestimento: props.investimento.tipoInvestimento,
-                valor: props.investimento.valor,
-                indexador: props.investimento.indexador,
-                taxa: props.investimento.taxa,
-                dataInicial: props.investimento.dataInicial,
-                dataFinal: props.investimento.dataFinal
-            },
+            tipoInvestimento: props.tipoInvestimento,
+            valor: props.valor,
+            indexador: props.indexador,
+            taxa: props.taxa,
+            dataInicial: props.dataInicial,
+            dataFinal: props.dataFinal,
+            indexadores: [],
+        };
+
+        getIndexadores()
+        .then(dados => {
+            this.setState({
+                // TODO: Melhorar o retorno apenas do que é necessário utilizando o GRAPHQL
+                indexadores: dados.body.Indexadores,
+            });
+        console.log("InvestimentoForm.constructor indexadores: " + this.state.indexadores)
+
+        this.atualizarInvestimento = this.atualizarInvestimento.bind(this)
+    });
+    }
+
+    // componentDidMount() {
+    //     console.log("InvestimentoForm.componentDidMount")
+    //     getIndexadores()
+    //         .then(dados => {
+    //             this.setState({
+    //                 // TODO: Melhorar o retorno apenas do que é necessário utilizando o GRAPHQL
+    //                 indexadores: dados.body.indexadores,
+    //             });
+    //     });
+    // }
+    
+    atualizarInvestimento() {
+        alert("modal is open? --> " + this.props.modalIsOpen)
+        if (this.props.modalIsOpen) {
+            this.props.dispatch(this.state.indexador);
+            // this.props.atualizarInvestimento(this.state.tipoInvestimento, this.state.valInvestimentoInicial, this.state.indexador, this.state.taxa, this.state.dataInicial, this.state.dataFinal)
         }
     }
 
-    componentDidMount() {
-
-    }
+    // change
+    handleChange = (e) => {
+        console.log("InvestimentoForm.handleChange")
+        const { target: { name, value } } = e;
+        this.setState({
+            [name]: value
+        });
+    };
 
     render() {
+        console.log("InvestimentoForm.render modalIsOpen = true")
+        console.log("InvestimentoForm.render state.indexadores: " + this.state.indexadores)
+        console.log("InvestimentoForm.render state.indexador: " + this.state.indexador)
+        console.log("InvestimentoForm.render state.taxa: " + this.state.taxa)
         return (
             <div>
                 <Modal
@@ -42,93 +81,199 @@ class InvestimentoForm extends Component {
                     style={customStyles}
                     contentLabel="Dados do Investimento"
                 >
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-sm-6 col-lg-4">
-                                <p>{this.state.investimento.tipoInvestimento}</p>
+
+                    <div className="col-md-12 order-md-1 scroll">
+                        <h4 className="mb-3">{this.state.tipoInvestimento}</h4>
+                        <form className="needs-validation" onSubmit={this.atualizarInvestimento} noValidate>
+                            <div className="row">
+                                <div className="col-md-4 mb-3">
+                                    <label htmlFor="tipoInvestimento">Tipo de Investimento</label>
+                                    <select className="custom-select d-block w-100 align-baseline" id="tipoInvestimento" onChange={this.handleChange} value={this.state.tipoInvestimento} required>
+                                    <option value="">Selecione...</option>
+                                    <option value="cdb">CDB</option>
+                                    <option value="lci">LCI</option>
+                                    <option value="lca">LCA</option>
+                                    <option value="poupanca">Poupança</option>
+                                    </select>
+                                    <div className="invalid-feedback">
+                                        Por favor selecione um tipo de investimento.
+                                    </div>
+                                </div>
+                                <div className="col-md-4 mb-3">
+                                    <label htmlFor="indexador">Indexador</label>
+                                    <select className="custom-select d-block w-100 align-baseline" name="indexador" onChange={this.handleChange} value={this.state.indexador} required>
+                                    {/* <option name="indexador" value="">Selecione...</option> */}
+                                    {
+                                        this.state.indexadores.map((indexador, indice) => {
+                                            console.log("InvestimentoForm.render map: " + indexador + " / indice: " + indice)
+                                            return(
+                                                <option id={"indexador_"+ indice} key={indice} value={indexador.id}>{indexador.nome}</option>
+                                            )
+                                        })
+                                    }
+                                    </select>
+                                    <div className="invalid-feedback">
+                                        Por favor selecione um indexador para o investimento.
+                                    </div>
+                                </div>
+                                <div className="col-md-4 mb-3">
+                                    <label htmlFor="taxa">Taxa</label>
+                                    <input type="text" className="form-control align-baseline" id="taxa" placeholder="" onChange={this.handleChange} value={this.state.taxa} required />
+                                    <div className="invalid-feedback">
+                                        Por favor informe a taxa do investimento.
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+
+                            {/* <div className="row">
+                                <div className="col-md-6 mb-3">
+                                    <label for="firstName">First name</label>
+                                    <input type="text" className="form-control" id="firstName" placeholder="" value="" required />
+                                    <div className="invalid-feedback">
+                                    Valid first name is required.
+                                    </div>
+                                </div>
+                                <div className="col-md-6 mb-3">
+                                    <label for="lastName">Last name</label>
+                                    <input type="text" className="form-control" id="lastName" placeholder="" value="" required />
+                                    <div className="invalid-feedback">
+                                    Valid last name is required.
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mb-3">
+                                <label for="username">Username</label>
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                    <span className="input-group-text">@</span>
+                                    </div>
+                                    <input type="text" className="form-control" id="username" placeholder="Username" required />
+                                    <div className="invalid-feedback" style={{width: "100%"}}>
+                                    Your username is required.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mb-3">
+                                <label for="email">Email <span className="text-muted">(Optional)</span></label>
+                                <input type="email" className="form-control" id="email" placeholder="you@example.com" />
+                                <div className="invalid-feedback">
+                                    Please enter a valid email address for shipping updates.
+                                </div>
+                            </div>
+
+                            <div className="mb-3">
+                                <label for="address">Address</label>
+                                <input type="text" className="form-control" id="address" placeholder="1234 Main St" required />
+                                <div className="invalid-feedback">
+                                    Please enter your shipping address.
+                                </div>
+                            </div>
+
+                            <div className="mb-3">
+                                <label for="address2">Address 2 <span className="text-muted">(Optional)</span></label>
+                                <input type="text" className="form-control" id="address2" placeholder="Apartment or suite" />
+                            </div>
+
+                            <div className="row">
+                                <div className="col-md-5 mb-3">
+                                    <label for="country">Country</label>
+                                    <select className="custom-select d-block w-100" id="country" required>
+                                    <option value="">Choose...</option>
+                                    <option>United States</option>
+                                    </select>
+                                    <div className="invalid-feedback">
+                                    Please select a valid country.
+                                    </div>
+                                </div>
+                                <div className="col-md-4 mb-3">
+                                    <label for="state">State</label>
+                                    <select className="custom-select d-block w-100" id="state" required>
+                                        <option value="">Choose...</option>
+                                        <option>California</option>
+                                    </select>
+                                    <div className="invalid-feedback">
+                                    Please provide a valid state.
+                                    </div>
+                                </div>
+                                <div className="col-md-3 mb-3">
+                                    <label for="zip">Zip</label>
+                                    <input type="text" className="form-control" id="zip" placeholder="" required />
+                                    <div className="invalid-feedback">
+                                    Zip code required.
+                                    </div>
+                                </div>
+                            </div>
+                            <hr className="mb-4" />
+                                <div className="custom-control custom-checkbox">
+                                <input type="checkbox" className="custom-control-input" id="same-address" />
+                                <label className="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
+                            </div>
+                            <div className="custom-control custom-checkbox">
+                                <input type="checkbox" className="custom-control-input" id="save-info" />
+                                <label className="custom-control-label" for="save-info">Save this information for next time</label>
+                            </div>
+                            <hr className="mb-4" />
+
+                            <h4 className="mb-3">Payment</h4>
+
+                            <div className="d-block my-3">
+                                <div className="custom-control custom-radio">
+                                    <input id="credit" name="paymentMethod" type="radio" className="custom-control-input" checked required />
+                                    <label className="custom-control-label" for="credit">Credit card</label>
+                                </div>
+                                <div className="custom-control custom-radio">
+                                    <input id="debit" name="paymentMethod" type="radio" className="custom-control-input" required />
+                                    <label className="custom-control-label" for="debit">Debit card</label>
+                                </div>
+                                <div className="custom-control custom-radio">
+                                    <input id="paypal" name="paymentMethod" type="radio" className="custom-control-input" required />
+                                    <label className="custom-control-label" for="paypal">PayPal</label>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-6 mb-3">
+                                    <label for="cc-name">Name on card</label>
+                                    <input type="text" className="form-control" id="cc-name" placeholder="" required />
+                                    <small className="text-muted">Full name as displayed on card</small>
+                                    <div className="invalid-feedback">
+                                    Name on card is required
+                                    </div>
+                                </div>
+                                <div className="col-md-6 mb-3">
+                                    <label for="cc-number">Credit card number</label>
+                                    <input type="text" className="form-control" id="cc-number" placeholder="" required />
+                                    <div className="invalid-feedback">
+                                    Credit card number is required
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-3 mb-3">
+                                    <label for="cc-expiration">Expiration</label>
+                                    <input type="text" className="form-control" id="cc-expiration" placeholder="" required />
+                                    <div className="invalid-feedback">
+                                    Expiration date required
+                                    </div>
+                                </div>
+                                <div className="col-md-3 mb-3">
+                                    <label for="cc-cvv">CVV</label>
+                                    <input type="text" className="form-control" id="cc-cvv" placeholder="" required />
+                                    <div className="invalid-feedback">
+                                    Security code required
+                                    </div>
+                                </div> */}
+                            <hr className="mb-4" />
+                            <button className="btn btn-primary btn-lg btn-block" type="submit">Atualizar</button>
+                        </form>
                     </div>
-                    {/* <form id="formu" style={{ display: 'block' }} onSubmit={this.handleSubmit1}>
-                        <div className="container">
-                            <div className="row">
-                                <div className="col-sm-6 col-lg-4">
-                                    <div className="form-group">
-                                        <label className="form-label"   > &nbsp;Nome</label>
-
-                                        <input className="form-control"
-                                            maxLength="75"
-                                            type="text"
-                                            value={this.state.nome}
-                                            name="nome"
-                                            placeholder="Entre com o nome"
-                                            onChange={this.handleChange}
-                                            required
-                                            title="Somente letras e espaços" />
-
-                                    </div>
-                                </div>
-                                <div className="col-sm-6 col-lg-3">
-
-                                    <div className="form-group">
-                                        <label className="form-label">CPF </label>
-
-                                        <input value={this.state.cpf} type="text" className="form-control" id="cpf" name="cpf" onChange={this.handleChange} placeholder="Ex: 000.000.000-00" required pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" title=" CPF no formato nnn.nnn.nnn-nn" />
-                                    </div>
-                                </div>
-
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="form-group">
-                                        <label className="form-label">Data de Nasc</label>
-                                        <input type="date" value={this.state.data_nascimento} onChange={this.handleChange} className="form-control" id="data_nascimento" name="data_nascimento" maxlenght="4" placeholder="dd/mm/aaa" required pattern="[0-9]{2}\/[0-9]{2}\/[0-9]{4}$" />
-                                    </div>
-                                </div>
-                                <div className="col-sm-6 col-lg-2">
-                                    <div className="form-group">
-                                        <label className="form-label">Agência</label>
-                                        <input value={this.state.agencia} type="text" className="form-control " onChange={this.handleChange} id="agencia" name="agencia" maxlenght="5" placeholder=" Ex 1234-5.." required pattern="\d{4}-\d{1}" maxlengt="6" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-sm-6 col-lg-3">
-
-                                    <div className="form-group">
-                                        <label className="form-label">Conta Corrente </label>
-                                        <input value={this.state.conta_corrente} type="text" className="form-control" onChange={this.handleChange} id="conta_corrente" name="conta_corrente" placeholder="Número da Conta.." required />
-                                    </div>
-                                </div>
-
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="form-group">
-                                        <label className="form-label">Telefone</label>
-                                        <input value={this.state.telefone} type="text" className="form-control" id="telefone" onChange={this.handleChange} name="telefone" maxlenght="11" placeholder="Telefone...." required pattern="\d{11}" title="Digite o Telefone com 11 dígitos . DDD + Números. Ex:01112345678 ou 11123456789" />
-                                    </div>
-                                </div>
-
-                                <div className="col-sm-12 col-lg-6">
-                                    <div className="form-group">
-                                        <label className="form-label">E-mail</label>
-                                        <input value={this.state.email} type="email" className="form-control " id="email" name="email" maxlenght="5" onChange={this.handleChange} placeholder="nome@email.com" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" title="exemplo usuario@ dominio (dominio é sempre nome +ponto + texto)" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-12">
-                                    <div className="button-group">
-                                        <button type="submit" className="btn btn-primary racinput1">Enviar</button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </form> */}
                 </Modal >
                 <br />
             </div >
         )
-
     }
 }
+
+Modal.setAppElement('body');
 
 export default InvestimentoForm;
