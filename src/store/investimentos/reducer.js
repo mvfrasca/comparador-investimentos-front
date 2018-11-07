@@ -36,12 +36,15 @@ const initialState = Immutable({
 });
 
 export default function reduce(state = initialState, action = {}) {
-    console.log("investimentos.reducer.reduce " + state.investimentosList.tipoInvestimento)
+    console.log("investimentos.reducer.reduce " + state.investimentosList[0].tipoInvestimento + " action: " + action.type);
     switch (action.type) {
         case types.RECEBER_INVESTIMENTOS, types.CALCULAR_INVESTIMENTO:
             return state.merge({
                 investimentosList: action.investimentosList
             });
+        case types.ATUALIZAR_INVESTIMENTO:
+            state.investimentosList[action.investimento.id] = action.investimento;
+            return state;
         default:
             return state;
     }
@@ -51,5 +54,5 @@ export default function reduce(state = initialState, action = {}) {
 
 export function getInvestimentos(state) {
     console.log("investimentos.reducer.getInvestimentos")
-    return state.investimentos.investimentosList;
+    return state.investimentosList;
 }

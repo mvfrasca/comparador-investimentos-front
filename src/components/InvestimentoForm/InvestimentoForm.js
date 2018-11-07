@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getIndexadores } from "../../services/investimento";
+import investimentoService from "../../services/investimento";
 import Modal from 'react-modal';
 
 const customStyles = {
@@ -19,7 +19,7 @@ class InvestimentoForm extends Component {
         super(props);
         this.state = {
             tipoInvestimento: props.tipoInvestimento,
-            valor: props.valor,
+            valorInvestimentoInicial: props.valorInvestimentoInicial,
             indexador: props.indexador,
             taxa: props.taxa,
             dataInicial: props.dataInicial,
@@ -27,7 +27,7 @@ class InvestimentoForm extends Component {
             indexadores: [],
         };
 
-        getIndexadores()
+        investimentoService.getIndexadores()
         .then(dados => {
             this.setState({
                 // TODO: Melhorar o retorno apenas do que é necessário utilizando o GRAPHQL
@@ -53,8 +53,8 @@ class InvestimentoForm extends Component {
     atualizarInvestimento() {
         alert("modal is open? --> " + this.props.modalIsOpen)
         if (this.props.modalIsOpen) {
-            this.props.dispatch(this.state.indexador);
-            // this.props.atualizarInvestimento(this.state.tipoInvestimento, this.state.valInvestimentoInicial, this.state.indexador, this.state.taxa, this.state.dataInicial, this.state.dataFinal)
+            // this.props.dispatch(this.state.indexador);
+            this.props.onAtualizarInvestimentoRequest(this.state)
         }
     }
 

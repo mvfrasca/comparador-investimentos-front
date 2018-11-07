@@ -5,7 +5,7 @@ import * as investimentosActions from './../../store/investimentos/actions';
 import InvestimentoForm from '../InvestimentoForm/InvestimentoForm';
 
 class Investimento extends Component {
-    constructor(investimento){
+    constructor(investimento, onAtualizarInvestimentoRequest){
         console.log("Investimento.constructor")
         super(investimento);
         this.state = {
@@ -122,7 +122,7 @@ class Investimento extends Component {
                     <InvestimentoForm 
                         modalIsOpen={this.state.modalIsOpen}
                         closeModal={this.closeModal}
-                        atualizarInvestimento={this.atualizarInvestimento}
+                        onAtualizarInvestimentoRequest={this.onAtualizarInvestimentoRequest}
                         // investimento={this.state.investimento}
                         tipoInvestimento={this.state.tipoInvestimento}
                         valInvestimentoInicial={this.state.valInvestimentoInicial}
