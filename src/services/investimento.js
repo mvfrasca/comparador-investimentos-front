@@ -6,7 +6,7 @@ class InvestimentoService {
         console.log("tipoInvestimento: " + tipoInvestimento + ", valor: " + valInvestimentoInicial)
         return fetch(
             `${URL_API}/investimento?tipoInvestimento=${tipoInvestimento}&valor=${valInvestimentoInicial}&indexador=${indexador}&taxa=${taxa}&dataInicial=${dataInicial}&dataFinal=${dataFinal}`)
-            .then(resultado => resultado.json());
+            .then(resultado => resultado.json().then(dados => dados.body.resultadoInvestimento));
     }
 
     async getIndexadores(){

@@ -15,11 +15,15 @@ class Comparacao extends Component {
     }
 
     componentDidMount() {
+        console.log("Comparacao.componentDidMount - dispatch consultarInvestimentos");
         this.props.dispatch(investimentosActions.consultarInvestimentos());
+        console.log("Comparacao.componentDidMount - dispatch calcularInvestimento")
         this.props.dispatch(investimentosActions.calcularInvestimento(0));
+        this.props.dispatch(investimentosActions.calcularInvestimento(1));
     }
 
     render() {
+        console.log("Comparacao.render this.props.investimentosList: " + JSON.stringify(this.props.investimentosList))
         if (this.props.investimentosList == undefined) return this.renderLoading();
         return (
             <div className="container-fluid">
@@ -40,13 +44,13 @@ class Comparacao extends Component {
                     </div>
                     <div className="col">
                         < Investimento
-                            investimento={this.props.investimentoList[0]}
+                            investimento={this.props.investimentosList[0]}
                             onAtualizarInvestimentoRequest={(investimento) => investimentosActions.atualizarInvestimento(investimento)}
                         />
                     </div>
                     <div className="col">
                         < Investimento
-                            investimento={this.props.investimentoList[1]}
+                            investimento={this.props.investimentosList[1]}
                             onAtualizarInvestimentoRequest={(investimento) => investimentosActions.atualizarInvestimento(investimento)}
                         />
                     </div>
@@ -69,8 +73,9 @@ class Comparacao extends Component {
 }
 
 function mapStateToProps(state) {
+    console.log("mapStateToProps state: " + JSON.stringify(state))
     return {
-        investimentosList: state.investimentosList,
+        investimentosList: state.investimentos.investimentosList,
     };
 }
 

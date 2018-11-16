@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import investimentoService from "../../services/investimento";
+import autoBind from 'react-autobind';
 import Modal from 'react-modal';
 
 const customStyles = {
@@ -18,12 +19,14 @@ class InvestimentoForm extends Component {
         console.log("InvestimentoForm.constructor")
         super(props);
         this.state = {
-            tipoInvestimento: props.tipoInvestimento,
-            valorInvestimentoInicial: props.valorInvestimentoInicial,
-            indexador: props.indexador,
-            taxa: props.taxa,
-            dataInicial: props.dataInicial,
-            dataFinal: props.dataFinal,
+            investimento: {
+                tipoInvestimento: props.investimento.tipoInvestimento,
+                valorInvestimentoInicial: props.investimento.valorInvestimentoInicial,
+                indexador: props.investimento.indexador,
+                taxa: props.investimento.taxa,
+                dataInicial: props.investimento.dataInicial,
+                dataFinal: props.investimento.dataFinal,
+            },
             indexadores: [],
         };
 
@@ -35,7 +38,7 @@ class InvestimentoForm extends Component {
             });
         console.log("InvestimentoForm.constructor indexadores: " + this.state.indexadores)
 
-        this.atualizarInvestimento = this.atualizarInvestimento.bind(this)
+        autoBind(this);
     });
     }
 
@@ -54,7 +57,7 @@ class InvestimentoForm extends Component {
         alert("modal is open? --> " + this.props.modalIsOpen)
         if (this.props.modalIsOpen) {
             // this.props.dispatch(this.state.indexador);
-            this.props.onAtualizarInvestimentoRequest(this.state)
+            this.props.onAtualizarInvestimentoRequest(this.state.investimento)
         }
     }
 
@@ -83,17 +86,17 @@ class InvestimentoForm extends Component {
                 >
 
                     <div className="col-md-12 order-md-1 scroll">
-                        <h4 className="mb-3">{this.state.tipoInvestimento}</h4>
+                        <h4 className="mb-3">{this.state.investimento.tipoInvestimento}</h4>
                         <form className="needs-validation" onSubmit={this.atualizarInvestimento} noValidate>
                             <div className="row">
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="tipoInvestimento">Tipo de Investimento</label>
-                                    <select className="custom-select d-block w-100 align-baseline" id="tipoInvestimento" onChange={this.handleChange} value={this.state.tipoInvestimento} required>
+                                    <select className="custom-select d-block w-100 align-baseline" id="tipoInvestimento" onChange={this.handleChange} value={this.state.investimento.tipoInvestimento} required>
                                     <option value="">Selecione...</option>
-                                    <option value="cdb">CDB</option>
-                                    <option value="lci">LCI</option>
-                                    <option value="lca">LCA</option>
-                                    <option value="poupanca">Poupança</option>
+                                    <option value="CDB">CDB</option>
+                                    <option value="LCI">LCI</option>
+                                    <option value="LCA">LCA</option>
+                                    <option value="POUPANCA">Poupança</option>
                                     </select>
                                     <div className="invalid-feedback">
                                         Por favor selecione um tipo de investimento.
@@ -101,7 +104,7 @@ class InvestimentoForm extends Component {
                                 </div>
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="indexador">Indexador</label>
-                                    <select className="custom-select d-block w-100 align-baseline" name="indexador" onChange={this.handleChange} value={this.state.indexador} required>
+                                    <select className="custom-select d-block w-100 align-baseline" name="indexador" onChange={this.handleChange} value={this.state.investimento.indexador} required>
                                     {/* <option name="indexador" value="">Selecione...</option> */}
                                     {
                                         this.state.indexadores.map((indexador, indice) => {
@@ -118,7 +121,7 @@ class InvestimentoForm extends Component {
                                 </div>
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="taxa">Taxa</label>
-                                    <input type="text" className="form-control align-baseline" id="taxa" placeholder="" onChange={this.handleChange} value={this.state.taxa} required />
+                                    <input type="text" className="form-control align-baseline" id="taxa" placeholder="" onChange={this.handleChange} value={this.state.investimento.taxa} required />
                                     <div className="invalid-feedback">
                                         Por favor informe a taxa do investimento.
                                     </div>
