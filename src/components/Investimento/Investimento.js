@@ -6,18 +6,13 @@ import InvestimentoForm from '../InvestimentoForm/InvestimentoForm';
 
 class Investimento extends Component {
     constructor(props){
-        console.log("Investimento.constructor props:" + JSON.stringify(props))
+        console.log("Investimento.constructor props.investimento.id:" + JSON.stringify(props.investimento === undefined ? "undefined" : props.investimento.id))
         super(props);
         this.state = {
             // Controle do modal
             modalIsOpen: false,
         }
         autoBind(this);
-    }
-
-    componentDidUpdate(){
-        console.log("Investimento.componentDidUpdate this.props: " + JSON.stringify(this.props) )
-        // onAtualizarInvestimentoRequest(this.state.id)
     }
 
     btnAlterarInvestimento_Click() {
@@ -27,27 +22,20 @@ class Investimento extends Component {
         });
     }
 
-    // atualizarInvestimento(_tipoInvestimento, _valInvestimentoInicial, _indexador, _taxa, _dataInicial, _dataFinal) {
-    //     console.log("Investimento.atualizarInvestimento indexador (ANTES): " + this.state.indexador + " Veio: " + _indexador)
-    //     this.setState({ 
-    //         tipoInvestimento: _tipoInvestimento,
-    //         valInvestimentoInicial: _valInvestimentoInicial,
-    //         indexador: _indexador,
-    //         taxa: _taxa,
-    //         dataInicial: _dataInicial,
-    //         dataFinal: _dataFinal,
-    //     });
-    //     console.log("Investimento.atualizarInvestimento indexador (DEPOIS): " + this.state.indexador)
-    // }
+    atualizarInvestimento(investimento) {
+        console.log("Investimento.atualizarInvestimento " + JSON.stringify(investimento))
+        this.props.onAtualizarInvestimentoRequest(investimento);
+    }
 
     closeModal() {
+        console.log("Investimento.closeModal()");
         this.setState({ 
             modalIsOpen: false,
         });
     }
 
     render(){
-        if (this.props.investimento == undefined || !this.props.investimento.calculado) return this.renderLoading();
+        if (this.props.investimento === undefined || !this.props.investimento.calculado) return this.renderLoading();
         return(
             <div>
                 <div className="card ">
@@ -55,8 +43,6 @@ class Investimento extends Component {
                         { this.props.investimento.tipoInvestimento } { this.props.investimento.indexador } + { this.props.investimento.taxa } %
                     </div>
                     <ul className="list-group list-group-flush">
-                        {console.log("this.investimento: " + JSON.stringify(this.props))}
-                        {console.log("this.investimento: " + JSON.stringify(this.props.investimento.valInvestimentoInicial))}
                         <li className="list-group-item text-right">{ this.props.investimento.valInvestimentoInicial.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</li>
                         <li className="list-group-item text-right">{ this.props.investimento.valImpostoRenda.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</li>
                         <li className="list-group-item text-right">{ this.props.investimento.valSaldoBruto.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</li>
@@ -73,7 +59,7 @@ class Investimento extends Component {
                     <InvestimentoForm 
                         modalIsOpen={this.state.modalIsOpen}
                         closeModal={this.closeModal}
-                        onAtualizarInvestimentoRequest={this.props.onAtualizarInvestimentoRequest}
+                        onAtualizarInvestimentoRequest={this.atualizarInvestimento}
                         investimento={this.props.investimento}
                     />
                 </div>

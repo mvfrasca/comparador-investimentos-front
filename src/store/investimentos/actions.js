@@ -1,31 +1,48 @@
 import _ from 'lodash';
-import Immutable from 'seamless-immutable';
+// import Immutable from 'seamless-immutable';
 import * as types from '../../constants/actionTypes';
 import investimentoService from "../../services/investimento";
 
-export function calcularInvestimento(id) {
+export function calcularInvestimento(investimentoCalcular) {
     return async (dispatch, getState) => {
         try {
-            // console.log("investimentos.actions.calcularInvestimento(" + id + ")");
-            // console.log("investimentos.actions.calcularInvestimento getState() " + JSON.stringify(getState().investimentos.investimentosList[id]));
-            var investimentosList = getState().investimentos.investimentosList
-            // console.log("investimentosList[id].indexador: " + investimentosList[id].indexador)
-            var investimento = await investimentoService.calcularInvestimento(investimentosList[id].tipoInvestimento, investimentosList[id].valInvestimentoInicial, investimentosList[id].indexador, investimentosList[id].taxa, investimentosList[id].dataInicial, investimentosList[id].dataFinal);
-            investimento.calculado = true;
-            var investimento = _.assign({}, investimentosList[id], investimento)
-            // console.log("investimentos.actions.calcularInvestimento investimento: " + JSON.stringify(investimento))
-            // console.log("investimentos.actions.calcularInvestimento investimentosList[id]: " + JSON.stringify(newInvestimentosList))
-            dispatch({ type: types.CALCULAR_INVESTIMENTO, investimento });
+            if (!investimentoCalcular.calculado) {
+                // console.log("investimentos.actions.calcularInvestimento(" + id + ")");
+                console.log("investimentos.actions.calcularInvestimento  investimentoCalcular: " + JSON.stringify(investimentoCalcular));
+                let investimentoStore = getState().investimentos.investimentosList[investimentoCalcular.id]
+                let investimentoCalculado = await investimentoService.calcularInvestimento(investimentoCalcular);
+                investimentoCalculado.calculado = true;
+                let investimento = _.assign({}, investimentoStore, investimentoCalculado)
+                // console.log("investimentos.actions.calcularInvestimento investimento: " + JSON.stringify(investimento))
+                // console.log("investimentos.actions.calcularInvestimento investimentosList[id]: " + JSON.stringify(newInvestimentosList))
+                dispatch({ type: types.ATUALIZAR_INVESTIMENTO, investimento });
+            }
         } catch (error) {
             console.error(error);
         }
     };
 }
 
-export function atualizarInvestimento(investimento) {
+export function atualizarInvestimento(investimentoAtualizar) {
     return async (dispatch, getState) => {
-        dispatch({ type: types.ATUALIZAR_INVESTIMENTO, investimento });
-    }
+        try {
+            console.log("actions atualizarInvestimento fora: " + JSON.stringify(investimentoAtualizar));
+            let investimentoStore = getState().investimentos.investimentosList[investimentoAtualizar.id]
+            investimentoAtualizar.calculado = false;
+            let investimento = _.assign({}, investimentoStore, investimentoAtualizar)
+            dispatch({ type: types.ATUALIZAR_INVESTIMENTO, investimento });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    // return async (dispatch, getState) => {
+    //     try {
+    //         console.log("actions atualizarInvestimento: " + JSON.stringify(investimento));
+    //         dispatch({ type: types.ATUALIZAR_INVESTIMENTO, investimento });
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // };
 }
 
 export function consultarInvestimentos() {

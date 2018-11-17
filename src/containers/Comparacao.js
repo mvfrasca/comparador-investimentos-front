@@ -11,20 +11,31 @@ class Comparacao extends Component {
         // this.state = {
         //     investimentoList: []
         // }
-        autoBind(this);
+        autoBind(this);        
     }
 
     componentDidMount() {
         console.log("Comparacao.componentDidMount - dispatch consultarInvestimentos");
         this.props.dispatch(investimentosActions.consultarInvestimentos());
-        console.log("Comparacao.componentDidMount - dispatch calcularInvestimento")
-        this.props.dispatch(investimentosActions.calcularInvestimento(0));
-        this.props.dispatch(investimentosActions.calcularInvestimento(1));
+    }
+
+    componentDidUpdate() {
+        this.props.investimentosList.map( 
+            (investimento, indice) => {
+                console.log("Comparacao.componentDidMount - dispatch calcularInvestimento " + indice);
+                this.props.dispatch(investimentosActions.calcularInvestimento(investimento));
+                return;
+            }
+        )
+    }
+
+    atualizarInvestimento(investimento) {
+        this.props.dispatch(investimentosActions.atualizarInvestimento(investimento));
     }
 
     render() {
-        console.log("Comparacao.render this.props.investimentosList: " + JSON.stringify(this.props.investimentosList))
-        if (this.props.investimentosList == undefined) return this.renderLoading();
+        console.log("Comparacao.render")
+        if (this.props.investimentosList === undefined) return this.renderLoading();
         return (
             <div className="container-fluid">
                 <div className="row">
@@ -42,18 +53,20 @@ class Comparacao extends Component {
                             </ul>
                         </div>
                     </div>
-                    <div className="col">
-                        < Investimento
-                            investimento={this.props.investimentosList[0]}
-                            onAtualizarInvestimentoRequest={(investimento) => investimentosActions.atualizarInvestimento(investimento)}
-                        />
-                    </div>
-                    <div className="col">
-                        < Investimento
-                            investimento={this.props.investimentosList[1]}
-                            onAtualizarInvestimentoRequest={(investimento) => investimentosActions.atualizarInvestimento(investimento)}
-                        />
-                    </div>
+                    {
+                        this.props.investimentosList.map( 
+                            (investimento, indice) => {
+                                return (
+                                <div key={"divInvestimento_" + indice} className="col">
+                                    < Investimento
+                                        investimento={investimento}
+                                        onAtualizarInvestimentoRequest={this.atualizarInvestimento}
+                                    />
+                                </div>
+                                )
+                            }
+                        )
+                    }
                 </div>
             </div>
         )
@@ -73,7 +86,8 @@ class Comparacao extends Component {
 }
 
 function mapStateToProps(state) {
-    console.log("mapStateToProps state: " + JSON.stringify(state))
+    // console.log("mapStateToProps state: " + JSON.stringify(state))
+    console.log("Comparacao.mapStateToProps")
     return {
         investimentosList: state.investimentos.investimentosList,
     };

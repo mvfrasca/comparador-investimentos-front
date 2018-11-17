@@ -2,10 +2,10 @@ import { URL_API } from "../constants/base";
 
 class InvestimentoService {
 
-    async calcularInvestimento(tipoInvestimento, valInvestimentoInicial, indexador, taxa, dataInicial, dataFinal){
-        console.log("tipoInvestimento: " + tipoInvestimento + ", valor: " + valInvestimentoInicial)
+    async calcularInvestimento(investimento){
+        console.log("investimentoService " + JSON.stringify(investimento))
         return fetch(
-            `${URL_API}/investimento?tipoInvestimento=${tipoInvestimento}&valor=${valInvestimentoInicial}&indexador=${indexador}&taxa=${taxa}&dataInicial=${dataInicial}&dataFinal=${dataFinal}`)
+            `${URL_API}/investimento?tipoInvestimento=${investimento.tipoInvestimento}&valor=${investimento.valInvestimentoInicial}&indexador=${investimento.indexador}&taxa=${investimento.taxa}&dataInicial=${investimento.dataInicial}&dataFinal=${investimento.dataFinal}`)
             .then(resultado => resultado.json().then(dados => dados.body.resultadoInvestimento));
     }
 

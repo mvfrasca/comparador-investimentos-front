@@ -20,6 +20,7 @@ class InvestimentoForm extends Component {
         super(props);
         this.state = {
             investimento: {
+                id: props.investimento.id,
                 tipoInvestimento: props.investimento.tipoInvestimento,
                 valorInvestimentoInicial: props.investimento.valorInvestimentoInicial,
                 indexador: props.investimento.indexador,
@@ -34,47 +35,38 @@ class InvestimentoForm extends Component {
         .then(dados => {
             this.setState({
                 // TODO: Melhorar o retorno apenas do que é necessário utilizando o GRAPHQL
-                indexadores: dados.body.Indexadores,
+                indexadores: dados.body.indexadores,
             });
-        console.log("InvestimentoForm.constructor indexadores: " + this.state.indexadores)
+        console.log("InvestimentoForm.constructor indexadores: " + JSON.stringify(this.state.indexadores))
 
         autoBind(this);
     });
     }
-
-    // componentDidMount() {
-    //     console.log("InvestimentoForm.componentDidMount")
-    //     getIndexadores()
-    //         .then(dados => {
-    //             this.setState({
-    //                 // TODO: Melhorar o retorno apenas do que é necessário utilizando o GRAPHQL
-    //                 indexadores: dados.body.indexadores,
-    //             });
-    //     });
-    // }
     
-    atualizarInvestimento() {
+    atualizarInvestimento = (e) => {
+        // console.log("InvestimentoForm.atualizarInvestimento: " + JSON.stringify(e));
+        e.preventDefault();
         alert("modal is open? --> " + this.props.modalIsOpen)
         if (this.props.modalIsOpen) {
             // this.props.dispatch(this.state.indexador);
             this.props.onAtualizarInvestimentoRequest(this.state.investimento)
+            this.props.closeModal()
         }
     }
 
     // change
     handleChange = (e) => {
-        console.log("InvestimentoForm.handleChange")
         const { target: { name, value } } = e;
+        var newInvestimento = this.state.investimento;
+        newInvestimento[name] = value;
         this.setState({
-            [name]: value
+            investimento: newInvestimento
         });
     };
 
     render() {
-        console.log("InvestimentoForm.render modalIsOpen = true")
-        console.log("InvestimentoForm.render state.indexadores: " + this.state.indexadores)
-        console.log("InvestimentoForm.render state.indexador: " + this.state.indexador)
-        console.log("InvestimentoForm.render state.taxa: " + this.state.taxa)
+        console.log("InvestimentoForm.render state: " + JSON.stringify(this.state))
+        if (!this.props.modalIsOpen) return(<div/>);
         return (
             <div>
                 <Modal
@@ -88,15 +80,16 @@ class InvestimentoForm extends Component {
                     <div className="col-md-12 order-md-1 scroll">
                         <h4 className="mb-3">{this.state.investimento.tipoInvestimento}</h4>
                         <form className="needs-validation" onSubmit={this.atualizarInvestimento} noValidate>
+                        {/* <form className="needs-validation" noValidate> */}
                             <div className="row">
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="tipoInvestimento">Tipo de Investimento</label>
-                                    <select className="custom-select d-block w-100 align-baseline" id="tipoInvestimento" onChange={this.handleChange} value={this.state.investimento.tipoInvestimento} required>
+                                    <select className="custom-select d-block w-100 align-baseline" id="tipoInvestimento" name="tipoInvestimento" onChange={this.handleChange} value={this.state.investimento.tipoInvestimento} required>
                                     <option value="">Selecione...</option>
-                                    <option value="CDB">CDB</option>
-                                    <option value="LCI">LCI</option>
-                                    <option value="LCA">LCA</option>
-                                    <option value="POUPANCA">Poupança</option>
+                                    <option value="cdb">CDB</option>
+                                    <option value="lci">LCI</option>
+                                    <option value="lca">LCA</option>
+                                    <option value="poupanca">Poupança</option>
                                     </select>
                                     <div className="invalid-feedback">
                                         Por favor selecione um tipo de investimento.
@@ -104,11 +97,10 @@ class InvestimentoForm extends Component {
                                 </div>
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="indexador">Indexador</label>
-                                    <select className="custom-select d-block w-100 align-baseline" name="indexador" onChange={this.handleChange} value={this.state.investimento.indexador} required>
+                                    <select className="custom-select d-block w-100 align-baseline" id="indexador" name="indexador" onChange={this.handleChange} value={this.state.investimento.indexador} required>
                                     {/* <option name="indexador" value="">Selecione...</option> */}
                                     {
                                         this.state.indexadores.map((indexador, indice) => {
-                                            console.log("InvestimentoForm.render map: " + indexador + " / indice: " + indice)
                                             return(
                                                 <option id={"indexador_"+ indice} key={indice} value={indexador.id}>{indexador.nome}</option>
                                             )
@@ -121,7 +113,7 @@ class InvestimentoForm extends Component {
                                 </div>
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="taxa">Taxa</label>
-                                    <input type="text" className="form-control align-baseline" id="taxa" placeholder="" onChange={this.handleChange} value={this.state.investimento.taxa} required />
+                                    <input type="text" className="form-control align-baseline" id="taxa" name="taxa" placeholder="" onChange={this.handleChange} value={this.state.investimento.taxa} required />
                                     <div className="invalid-feedback">
                                         Por favor informe a taxa do investimento.
                                     </div>
@@ -267,7 +259,8 @@ class InvestimentoForm extends Component {
                                     </div>
                                 </div> */}
                             <hr className="mb-4" />
-                            <button className="btn btn-primary btn-lg btn-block" type="submit">Atualizar</button>
+                            <button className="btn btn-primary btn-lg btn-block" type="submit" >Atualizar</button>
+                            {/* <button className="btn btn-primary btn-lg btn-block" type="button" onClick={() => this.props.onAtualizarInvestimentoRequest(this.state.investimento)}>Atualizar</button> */}
                         </form>
                     </div>
                 </Modal >
