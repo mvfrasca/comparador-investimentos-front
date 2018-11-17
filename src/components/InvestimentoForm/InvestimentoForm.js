@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import investimentoService from "../../services/investimento";
 import autoBind from 'react-autobind';
 import Modal from 'react-modal';
 
@@ -27,26 +26,17 @@ class InvestimentoForm extends Component {
                 taxa: props.investimento.taxa,
                 dataInicial: props.investimento.dataInicial,
                 dataFinal: props.investimento.dataFinal,
-            },
-            indexadores: [],
+            }
         };
 
-        investimentoService.getIndexadores()
-        .then(dados => {
-            this.setState({
-                // TODO: Melhorar o retorno apenas do que é necessário utilizando o GRAPHQL
-                indexadores: dados.body.indexadores,
-            });
-        console.log("InvestimentoForm.constructor indexadores: " + JSON.stringify(this.state.indexadores))
-
+        // console.log("InvestimentoForm.constructor indexadores: " + JSON.stringify(this.state.indexadores))
+        console.log("InvestimentoForm.constructor");
         autoBind(this);
-    });
     }
     
     atualizarInvestimento = (e) => {
         // console.log("InvestimentoForm.atualizarInvestimento: " + JSON.stringify(e));
         e.preventDefault();
-        alert("modal is open? --> " + this.props.modalIsOpen)
         if (this.props.modalIsOpen) {
             // this.props.dispatch(this.state.indexador);
             this.props.onAtualizarInvestimentoRequest(this.state.investimento)
@@ -65,7 +55,8 @@ class InvestimentoForm extends Component {
     };
 
     render() {
-        console.log("InvestimentoForm.render state: " + JSON.stringify(this.state))
+        // console.log("InvestimentoForm.render state: " + JSON.stringify(this.state))
+        console.log("InvestimentoForm.render");
         if (!this.props.modalIsOpen) return(<div/>);
         return (
             <div>
@@ -87,8 +78,8 @@ class InvestimentoForm extends Component {
                                     <select className="custom-select d-block w-100 align-baseline" id="tipoInvestimento" name="tipoInvestimento" onChange={this.handleChange} value={this.state.investimento.tipoInvestimento} required>
                                     <option value="">Selecione...</option>
                                     <option value="cdb">CDB</option>
-                                    <option value="lci">LCI</option>
                                     <option value="lca">LCA</option>
+                                    <option value="lci">LCI</option>
                                     <option value="poupanca">Poupança</option>
                                     </select>
                                     <div className="invalid-feedback">
@@ -100,7 +91,7 @@ class InvestimentoForm extends Component {
                                     <select className="custom-select d-block w-100 align-baseline" id="indexador" name="indexador" onChange={this.handleChange} value={this.state.investimento.indexador} required>
                                     {/* <option name="indexador" value="">Selecione...</option> */}
                                     {
-                                        this.state.indexadores.map((indexador, indice) => {
+                                        this.props.indexadores.map((indexador, indice) => {
                                             return(
                                                 <option id={"indexador_"+ indice} key={indice} value={indexador.id}>{indexador.nome}</option>
                                             )

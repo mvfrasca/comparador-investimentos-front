@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import autoBind from 'react-autobind';
 import Investimento from './../components/Investimento/Investimento';
 import * as investimentosActions from '../store/investimentos/actions';
-import * as investimentosSelectors from '../store/investimentos/reducer';
+// import * as investimentosSelectors from '../store/investimentos/reducer';
 
 class Comparacao extends Component {
     constructor(props) {
@@ -16,6 +16,7 @@ class Comparacao extends Component {
 
     componentDidMount() {
         console.log("Comparacao.componentDidMount - dispatch consultarInvestimentos");
+        this.props.dispatch(investimentosActions.consultarIndexadores());
         this.props.dispatch(investimentosActions.consultarInvestimentos());
     }
 
@@ -23,8 +24,9 @@ class Comparacao extends Component {
         this.props.investimentosList.map( 
             (investimento, indice) => {
                 console.log("Comparacao.componentDidMount - dispatch calcularInvestimento " + indice);
-                this.props.dispatch(investimentosActions.calcularInvestimento(investimento));
-                return;
+                if (investimento !== undefined) {
+                    this.props.dispatch(investimentosActions.calcularInvestimento(investimento));
+                }
             }
         )
     }
@@ -60,6 +62,7 @@ class Comparacao extends Component {
                                 <div key={"divInvestimento_" + indice} className="col">
                                     < Investimento
                                         investimento={investimento}
+                                        indexadores={this.props.indexadores}
                                         onAtualizarInvestimentoRequest={this.atualizarInvestimento}
                                     />
                                 </div>
@@ -90,6 +93,7 @@ function mapStateToProps(state) {
     console.log("Comparacao.mapStateToProps")
     return {
         investimentosList: state.investimentos.investimentosList,
+        indexadores: state.investimentos.indexadores,
     };
 }
 

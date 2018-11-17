@@ -3,10 +3,12 @@ import autoBind from 'react-autobind';
 import './Investimento.css'
 //import { calcularInvestimento } from "../../services/investimento"
 import InvestimentoForm from '../InvestimentoForm/InvestimentoForm';
+import { StatusEnum } from  '../../constants/base';
 
 class Investimento extends Component {
     constructor(props){
-        console.log("Investimento.constructor props.investimento.id:" + JSON.stringify(props.investimento === undefined ? "undefined" : props.investimento.id))
+        // console.log("Investimento.constructor props.investimento.id:" + JSON.stringify(props.investimento === undefined ? "undefined" : props.investimento.id))
+        console.log("Investimento.constructor")
         super(props);
         this.state = {
             // Controle do modal
@@ -23,7 +25,8 @@ class Investimento extends Component {
     }
 
     atualizarInvestimento(investimento) {
-        console.log("Investimento.atualizarInvestimento " + JSON.stringify(investimento))
+        // console.log("Investimento.atualizarInvestimento " + JSON.stringify(investimento))
+        console.log("Investimento.atualizarInvestimento")
         this.props.onAtualizarInvestimentoRequest(investimento);
     }
 
@@ -35,7 +38,7 @@ class Investimento extends Component {
     }
 
     render(){
-        if (this.props.investimento === undefined || !this.props.investimento.calculado) return this.renderLoading();
+        if (this.props.investimento === undefined || this.props.investimento.status !== StatusEnum.CALCULADO) return this.renderLoading();
         return(
             <div>
                 <div className="card ">
@@ -61,6 +64,7 @@ class Investimento extends Component {
                         closeModal={this.closeModal}
                         onAtualizarInvestimentoRequest={this.atualizarInvestimento}
                         investimento={this.props.investimento}
+                        indexadores={this.props.indexadores}
                     />
                 </div>
             </div>
