@@ -7,6 +7,7 @@
     "jquery": "^3.3.1",
     "lodash": "^4.17.11",
     "popper.js": "^1.14.4",
+    "prop-types": "^15.6.2",
     "react": "^16.6.0",
     "react-autobind": "^1.0.6",
     "react-dom": "^16.6.0",
@@ -32,5 +33,11 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "engines": {
+    "node": "8.x.x"
+  },
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.5.0"
+  }
 }

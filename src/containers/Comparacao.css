@@ -1,0 +1,19 @@
+label {
+    font-size: small;
+    font-weight: bold;
+}
+.lista-comprimida {
+    font-size: small;
+    line-height: 0.5;
+    padding: 0rem !important;
+    flex: 0 !important;
+}
+.card-header {
+    vertical-align: middle !important;
+    padding: 0.4rem !important;
+}
+.btn {
+    padding: 0.2rem !important;
+    padding-top: 0rem !important;
+    padding-bottom: 0rem !important;
+}

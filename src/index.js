@@ -7,6 +7,7 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 
 import './index.css';
+import './include/fontawesome/css/all.min.css';
 import App from './App';
 import './include/bootstrap';
 import * as reducers from './store/reducers';

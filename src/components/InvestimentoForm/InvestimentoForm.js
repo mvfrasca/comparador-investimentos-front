@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import Modal from 'react-modal';
+import PropTypes from 'prop-types';
 
 const customStyles = {
     content: {
@@ -76,11 +77,11 @@ class InvestimentoForm extends Component {
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="tipoInvestimento">Tipo de Investimento</label>
                                     <select className="custom-select d-block w-100 align-baseline" id="tipoInvestimento" name="tipoInvestimento" onChange={this.handleChange} value={this.state.investimento.tipoInvestimento} required>
-                                    <option value="">Selecione...</option>
-                                    <option value="cdb">CDB</option>
-                                    <option value="lca">LCA</option>
-                                    <option value="lci">LCI</option>
-                                    <option value="poupanca">Poupança</option>
+                                        <option value="">Selecione...</option>
+                                        <option value="cdb">CDB</option>
+                                        <option value="lca">LCA</option>
+                                        <option value="lci">LCI</option>
+                                        <option value="poupanca">Poupança</option>
                                     </select>
                                     <div className="invalid-feedback">
                                         Por favor selecione um tipo de investimento.
@@ -259,6 +260,31 @@ class InvestimentoForm extends Component {
             </div >
         )
     }
+}
+
+InvestimentoForm.propTypes = {
+    modalIsOpen: PropTypes.bool.isRequired,
+    onAtualizarInvestimentoRequest: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    investimento: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        tipoInvestimento: PropTypes.string.isRequired,
+        valInvestimentoInicial: PropTypes.number.isRequired,
+        indexador: PropTypes.string.isRequired,
+        taxa: PropTypes.number,
+        dataInicial: PropTypes.string.isRequired,
+        dataFinal: PropTypes.string.isRequired,
+        status: PropTypes.number.isRequired,
+    }),
+    indexadores: PropTypes.arrayOf(PropTypes.shape({
+        dt_ult_atualiz: PropTypes.string,
+        dt_ult_referencia: PropTypes.string,
+        id: PropTypes.string,
+        nome: PropTypes.string,
+        periodicidade: PropTypes.string,
+        qtd_regs_ult_atualiz: PropTypes.number,
+        serie: PropTypes.string
+    }))
 }
 
 Modal.setAppElement('body');
