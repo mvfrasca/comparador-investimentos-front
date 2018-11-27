@@ -82,10 +82,13 @@ class Investimento extends Component {
                                 <h6 className="my-0">{ this.props.investimento.valIOF.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</h6>
                             </div>
                         </li>
-                        <li className="list-group-item text-right">
-                            <div>
+                        <li className="list-group-item d-flex justify-content-between lh-condensed">
+                            <div className="text-right">                              
+                                <span className={"badge badge-".concat(this.props.investimento.id === 0 ? "success" : "danger")}><i className={"far fa-thumbs-".concat(this.props.investimento.id === 0 ? "up" : "down")}></i></span>
+                            </div>
+                            <div className="text-right">
                                 <small className="text-muted">Valor Líquido</small>
-                                <h6 className="my-0 text-sucess">{ this.props.investimento.valSaldoLiquido.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</h6>
+                                <h6 className="my-0">{ this.props.investimento.valSaldoLiquido.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</h6>
                             </div>
                         </li>
                     </ul>
