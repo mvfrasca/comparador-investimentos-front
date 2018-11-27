@@ -12,10 +12,10 @@ class Comparacao extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            valInvestimentoInicial: 0,
-            dataInicial: "",
+            valInvestimentoInicial: undefined,
+            dataInicial: new Date().toISOString().substring(0,10),
             dataFinal: "",
-            qtdPeriodos: 0,
+            qtdPeriodos: undefined,
             periodicidade: "",
         }
         autoBind(this);        
@@ -56,11 +56,11 @@ class Comparacao extends Component {
             <div>
                 <p/>
                 <p>Informe o valor e período de investimento:</p>
-                <form className="needs-validation mb-3" onSubmit="" noValidate>
+                <form className="needs-validation mb-3" noValidate>
                     <div className="form-row align-items-center justify-content-center">
                         <div className="col-auto">
                             <label htmlFor="dataInicial">Valor a investir</label>
-                            <input type="text" className="form-control form-control-sm text-right" id="dataInicial" name="dataInicial" placeholder="5.000,00" onChange={this.handleChange} value={this.state.dataInicial} required />
+                            <input type="text" className="form-control form-control-sm text-right" id="valInvestimentoInicial" name="valInvestimentoInicial" placeholder="5.000,00" onChange={this.handleChange} value={this.state.valInvestimentoInicial} required />
                             <div className="invalid-feedback">
                                 Por favor informe o valor inicial do investimento.
                             </div>
@@ -102,34 +102,26 @@ class Comparacao extends Component {
                 </form>
                 <p/>
                 <p>Selecione até 3 investimentos a serem comparados:</p>
-                <div className="card-group">
-                    <div className="card">
-                        <div className="card-header">
-                            <h6>Investimentos</h6>
-                        </div>
-                        <div className="card-body lista-comprimida">
-                            <ul className="list-group list-group-flush">
-                                <li className="list-group-item">Valor do Investimento inicial</li>
-                                <li className="list-group-item">Valor do Imposto de Renda</li>
-                                <li className="list-group-item">Valor do Saldo Bruto</li>
-                                <li className="list-group-item">Valor do IOF</li>
-                                <li className="list-group-item">Valor do Saldo Líquido</li>
-                            </ul>
+                <div >
+                    <div className="row justify-content-center">
+                        <div className="col-10 col-lg-10 col-md-10 col-sm-10">
+                            <div className="card-group">
+                                {
+                                    this.props.investimentosList.map( 
+                                        (investimento, indice) => {
+                                            return (
+                                                < Investimento key={"divInvestimento_" + indice}
+                                                    investimento={investimento}
+                                                    indexadores={this.props.indexadores}
+                                                    onAtualizarInvestimentoRequest={this.atualizarInvestimento}
+                                                />
+                                            )
+                                        }
+                                    )
+                                }
+                            </div>
                         </div>
                     </div>
-                    {
-                        this.props.investimentosList.map( 
-                            (investimento, indice) => {
-                                return (
-                                    < Investimento key={"divInvestimento_" + indice}
-                                        investimento={investimento}
-                                        indexadores={this.props.indexadores}
-                                        onAtualizarInvestimentoRequest={this.atualizarInvestimento}
-                                    />
-                                )
-                            }
-                        )
-                    }
                 </div>
             </div>
         )

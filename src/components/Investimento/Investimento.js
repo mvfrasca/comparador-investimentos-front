@@ -41,13 +41,13 @@ class Investimento extends Component {
     render(){
         if (this.props.investimento === undefined || this.props.investimento.status !== StatusEnum.CALCULADO) return this.renderLoading();
         return(
-            <div className="card">
+            <div className="card" style={{minWidth:"250px"}}>
                 <div className="card-header">
-                    <div className="form-row align-items-center">
-                        <div className="col">
+                    <div className="form-row flex-nowrap">
+                        <div className="col align-middle ">
                             <h6>{ this.props.investimento.tipoInvestimento } { this.props.investimento.indexador } + { this.props.investimento.taxa } %</h6>
                         </div>
-                        <div className="col-alto">
+                        <div className="col-auto">
                             <button type="button" className="btn justify-content-right" onClick={this.btnAlterarInvestimento_Click}>
                                 <i className="fas fa-sliders-h"></i>
                             </button>
@@ -56,11 +56,38 @@ class Investimento extends Component {
                 </div>
                 <div className="card-body lista-comprimida">
                     <ul className="list-group list-group-flush">
-                        <li className="list-group-item text-right">{ this.props.investimento.valInvestimentoInicial.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</li>
-                        <li className="list-group-item text-right">{ this.props.investimento.valImpostoRenda.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</li>
-                        <li className="list-group-item text-right">{ this.props.investimento.valSaldoBruto.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</li>
-                        <li className="list-group-item text-right">{ this.props.investimento.valIOF.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</li>
-                        <li className="list-group-item text-right">{ this.props.investimento.valSaldoLiquido.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</li>
+                        <li className="list-group-item text-right">
+                            <div>
+                                <small className="text-muted">Valor Bruto</small>
+                                <h6 className="my-0">{ this.props.investimento.valSaldoBruto.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</h6>
+                            </div>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between lh-condensed">
+                            <div className="text-right">
+                                <small className="text-muted">Alíquota de I.R.</small>
+                                <h6 className="my-0">{ this.props.investimento.percImpostoRenda } %</h6>
+                            </div>
+                            <div className="text-right">
+                                <small className="text-muted">Imposto de Renda</small>
+                                <h6 className="my-0">{ this.props.investimento.valImpostoRenda.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</h6>
+                            </div>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between lh-condensed">
+                            <div className="text-right">
+                                <small className="text-muted">Alíquota de IOF</small>
+                                <h6 className="my-0">{ this.props.investimento.percIOF } %</h6>
+                            </div>
+                            <div className="text-right">
+                                <small className="text-muted">Valor de IOF</small>
+                                <h6 className="my-0">{ this.props.investimento.valIOF.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</h6>
+                            </div>
+                        </li>
+                        <li className="list-group-item text-right">
+                            <div>
+                                <small className="text-muted">Valor Líquido</small>
+                                <h6 className="my-0 text-sucess">{ this.props.investimento.valSaldoLiquido.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</h6>
+                            </div>
+                        </li>
                     </ul>
                 </div>
                 <div>

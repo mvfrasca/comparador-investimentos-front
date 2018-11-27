@@ -6,7 +6,7 @@ label {
     font-size: small;
     line-height: 0.5;
     padding: 0rem !important;
-    flex: 0 !important;
+    /* flex: 0 !important; */
 }
 .card-header {
     vertical-align: middle !important;
