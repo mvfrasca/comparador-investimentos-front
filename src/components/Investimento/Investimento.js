@@ -84,7 +84,9 @@ class Investimento extends Component {
                         </li>
                         <li className="list-group-item d-flex justify-content-between lh-condensed">
                             <div className="text-right">                              
-                                <span className={"badge badge-".concat(this.props.investimento.id === 0 ? "success" : "danger")}><i className={"far fa-thumbs-".concat(this.props.investimento.id === 0 ? "up" : "down")}></i></span>
+                                <span className={"badge badge-".concat(this.props.investimento.id === 1 ? "success" : "danger")}>
+                                    <i className={"far fa-thumbs-".concat(this.props.investimento.id === 1 ? "up" : "down")}></i>
+                                </span>
                             </div>
                             <div className="text-right">
                                 <small className="text-muted">Valor Líquido</small>
