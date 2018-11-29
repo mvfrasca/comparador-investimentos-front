@@ -14,9 +14,9 @@ class Comparacao extends Component {
         this.state = {
             valInvestimentoInicial: undefined,
             dataInicial: new Date().toISOString().substring(0,10),
-            dataFinal: "",
+            dataFinal: undefined,
             qtdPeriodos: undefined,
-            periodicidade: "",
+            periodicidade: "m",
         }
         autoBind(this);        
     }
@@ -36,6 +36,7 @@ class Comparacao extends Component {
                 }
             }
         )
+        console.log("Comparacao.componentDidMount state.dataFinal: " + this.state.dataFinal)
     }
 
     atualizarInvestimento(investimento) {
@@ -45,8 +46,80 @@ class Comparacao extends Component {
     handleChange = (e) => {
         const { target: { name, value } } = e;
         this.setState({
-            [name]: [value]
+            [name]: [value],
         });
+    }
+
+    handleChangePeriodo = (e) => {
+        const { target: { name, value } } = e;
+        console.log("handleChangePeriodo name: " + name)
+        console.log("handleChangePeriodo value: " + value)
+
+        let dataInicial = typeof(this.state.dataInicial) === "object" ? this.state.dataInicial.toString() : this.state.dataInicial
+        let periodicidade = typeof(this.state.periodicidade) === "object" ? this.state.periodicidade.toString() : this.state.periodicidade
+        let qtdPeriodos = typeof(this.state.qtdPeriodos) === "object" ? this.state.qtdPeriodos.toString() : this.state.qtdPeriodos
+        let dataFinal = typeof(this.state.dataFinal) === "object" ? this.state.dataFinal.toString() : this.state.dataFinal
+        switch (name) {
+            case "dataInicial":
+                dataInicial = value
+                break;
+            case "periodicidade":
+                periodicidade = value
+                break;
+            case "qtdPeriodos":
+                qtdPeriodos = value
+                break;
+        }
+        console.log("handleChangePeriodo dataInicial: " + dataInicial)
+        console.log("handleChangePeriodo dataInicial tipo: " + typeof(dataInicial))
+        console.log("handleChangePeriodo periodicidade: " + periodicidade)
+        console.log("handleChangePeriodo periodicidade tipo: " + typeof(periodicidade))
+        console.log("handleChangePeriodo qtdPeriodos: " + qtdPeriodos)
+        console.log("handleChangePeriodo qtdPeriodos tipo: " + typeof(qtdPeriodos))
+        console.log("handleChangePeriodo dataFinal: " + dataFinal)
+
+        if (dataInicial !== undefined && periodicidade !== undefined && 
+            qtdPeriodos !== undefined && qtdPeriodos.trim() !== "") {
+            dataFinal = this.atualizarDataFinal(dataInicial, periodicidade, qtdPeriodos);
+            console.log("handleChangePeriodo dados validos dataFinal: " + dataFinal);
+        }
+        else {
+            dataFinal = dataInicial;
+            console.log("handleChangePeriodo dados invalidos dataFinal: " + dataFinal);
+        }
+        
+        this.setState({
+            [name]: [value],
+            dataFinal: dataFinal,
+        });
+    }
+
+    atualizarDataFinal = (dataInicial, periodicidade, qtdPeriodos) => {
+        let dataFinal = new Date(this.state.dataInicial);
+        console.log("Comparacao.atualizarDataFinal Data Inicial: " + dataInicial);
+        console.log("Comparacao.atualizarDataFinal Periodicidade: " + periodicidade);
+        console.log("Comparacao.atualizarDataFinal Qtd Períodos: " + qtdPeriodos);
+        switch(periodicidade) {
+            case 'd':
+                dataFinal.setDate(dataFinal.getDate() + parseInt(qtdPeriodos));
+                break;
+            case 'm':
+                dataFinal.setMonth(dataFinal.getMonth() + parseInt(qtdPeriodos));
+                break;
+            case 'a':
+                dataFinal.setYear(dataFinal.getYear() + 1900 + parseInt(qtdPeriodos));
+                break;
+            default:
+                console.log("Comparacao.atualizarDataFinal periodicidade inválida")
+                return undefined;
+        }
+        console.log("Comparacao.atualizarDataFinal Data Final calculada: " + dataFinal)
+        console.log("Comparacao.atualizarDataFinal Data Final formatada: " + dataFinal.toISOString().substring(0,10))
+        return dataFinal.toISOString().substring(0,10)
+        // document.formDadosInvest.dataFinal.value = dataFinal.toISOString().substring(0,10)
+        // this.setState({
+        //     dataFinal: dataFinal.toISOString().substring(0,10)
+        // })
     };
 
     render() {
@@ -56,7 +129,7 @@ class Comparacao extends Component {
             <div>
                 <p/>
                 <p>Informe o valor e período de investimento:</p>
-                <form className="needs-validation mb-3" noValidate>
+                <form name="formDadosInvest" className="needs-validation mb-3" noValidate>
                     <div className="form-row align-items-center justify-content-center">
                         <div className="col-auto">
                             <label htmlFor="dataInicial">Valor a investir</label>
@@ -67,7 +140,7 @@ class Comparacao extends Component {
                         </div>
                         <div className="col-auto">
                             <label htmlFor="dataInicial">Data Inicial</label>
-                            <input type="date" className="form-control form-control-sm" id="dataInicial" name="dataInicial" placeholder={Date.now().toLocaleString('pt-BR', { timeZone: 'UTC' })} onChange={this.handleChange} value={this.state.dataInicial} required />
+                            <input type="date" className="form-control form-control-sm" id="dataInicial" name="dataInicial" placeholder={Date.now().toLocaleString('pt-BR', { timeZone: 'UTC' })} onChange={this.handleChangePeriodo} value={this.state.dataInicial} required />
                             <div className="invalid-feedback">
                                 Por favor informe a data inicial do investimento.
                             </div>
@@ -75,15 +148,15 @@ class Comparacao extends Component {
                         <div className="col-auto">
                             <label htmlFor="periodoInvestimento">Período de investimento</label>
                             <div className="input-group" id="periodoInvestimento">
-                                <input type="text" className="form-control form-control-sm w-25" id="qtdPeriodos" name="qtdPeriodos" placeholder="12" onChange={this.handleChange} value={this.state.qtdPeriodos} required />
+                                <input type="text" className="form-control form-control-sm w-25" id="qtdPeriodos" name="qtdPeriodos" placeholder="12" onChange={this.handleChangePeriodo} value={this.state.qtdPeriodos} required />
                                 <div className="invalid-feedback">
                                     Por favor informe o período do investimento.
                                 </div>
                                 <div className="input-group-append" id="periodoInvestimento">
-                                    <select className="form-control form-control-sm" id="periodicidade" name="periodicidade" onChange={this.handleChange} value={this.state.periodicidade} required>
-                                        <option value="d">dias</option>
-                                        <option value="m">meses</option>
-                                        <option value="a">anos</option>
+                                    <select className="form-control form-control-sm" id="periodicidade" name="periodicidade" onChange={this.handleChangePeriodo} value={this.state.periodicidade} required>
+                                        <option value="a">ano(s)</option>
+                                        <option value="d">dia(s)</option>
+                                        <option value="m">mês(es)</option>
                                     </select>
                                     <div className="invalid-feedback">
                                         Por favor selecione a periodicidade de investimento.
