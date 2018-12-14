@@ -62,8 +62,8 @@ export function consultarInvestimentos() {
                     valInvestimentoInicial: 25000,
                     indexador: "poupanca",
                     taxa: 0,
-                    dataInicial: "01/09/2014",
-                    dataFinal: "01/09/2018",
+                    dataInicial: "2014-09-01",
+                    dataFinal: "2018-09-01",
                     status: StatusEnum.A_CALCULAR
                 },
                 {
@@ -72,8 +72,8 @@ export function consultarInvestimentos() {
                     valInvestimentoInicial: 25000,
                     indexador: "ipca",
                     taxa: 5.57,
-                    dataInicial: "01/09/2014",
-                    dataFinal: "01/09/2018",
+                    dataInicial: "2014-09-01",
+                    dataFinal: "2018-09-01",
                     status: StatusEnum.A_CALCULAR
                 }
             ]

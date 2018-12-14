@@ -30,13 +30,13 @@ class Comparacao extends Component {
     componentDidUpdate() {
         this.props.investimentosList.map( 
             (investimento, indice) => {
-                console.log("Comparacao.componentDidMount - dispatch calcularInvestimento " + indice);
+                console.log("Comparacao.componentDidUpdate - dispatch calcularInvestimento " + indice);
                 if (investimento !== undefined) {
                     this.props.dispatch(investimentosActions.calcularInvestimento(investimento));
                 }
             }
         )
-        console.log("Comparacao.componentDidMount state.dataFinal: " + this.state.dataFinal)
+        console.log("Comparacao.componentDidUpdate state.dataFinal: " + this.state.dataFinal)
     }
 
     atualizarInvestimento(investimento) {
@@ -82,6 +82,20 @@ class Comparacao extends Component {
             qtdPeriodos !== undefined && qtdPeriodos.trim() !== "") {
             dataFinal = this.atualizarDataFinal(dataInicial, periodicidade, qtdPeriodos);
             console.log("handleChangePeriodo dados validos dataFinal: " + dataFinal);
+            this.props.investimentosList.map( 
+                (investimento, indice) => {
+                    if (investimento !== undefined) {
+                        let investimentoAtualizar = {
+                            ...investimento,
+                            dataInicial: dataInicial,
+                            dataFinal: dataFinal,
+                            valInvestimentoInicial: this.state.valInvestimentoInicial,
+                        }
+                        console.log("handleChangePeriodo investimento: " + JSON.stringify(investimentoAtualizar))
+                        this.props.dispatch(investimentosActions.atualizarInvestimento(investimento=investimentoAtualizar));
+                    }
+                }
+            )
         }
         else {
             dataFinal = dataInicial;
@@ -95,7 +109,7 @@ class Comparacao extends Component {
     }
 
     atualizarDataFinal = (dataInicial, periodicidade, qtdPeriodos) => {
-        let dataFinal = new Date(this.state.dataInicial);
+        let dataFinal = new Date(this.state.dataInicial + ' 12:00:00');
         console.log("Comparacao.atualizarDataFinal Data Inicial: " + dataInicial);
         console.log("Comparacao.atualizarDataFinal Periodicidade: " + periodicidade);
         console.log("Comparacao.atualizarDataFinal Qtd Períodos: " + qtdPeriodos);
