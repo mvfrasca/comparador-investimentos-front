@@ -37,6 +37,7 @@ export function atualizarInvestimento(investimentoAtualizar) {
             investimentoAtualizar.status = StatusEnum.A_CALCULAR;
             let investimento = _.assign({}, investimentoStore, investimentoAtualizar)
             dispatch({ type: types.ATUALIZAR_INVESTIMENTO, investimento });
+            
         } catch (error) {
             console.error(error);
         }

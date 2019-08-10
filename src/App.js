@@ -14,7 +14,7 @@ class App extends Component {
           <div className="row">
             <div className="col">
               <Switch>
-                <Route path="/" exact component={StatusAPI} />                              
+                <Route path="/" exact component={StatusAPI} />                           
                 <Route path="/rendafixa" component={Comparacao} />
               </Switch>
             </div>

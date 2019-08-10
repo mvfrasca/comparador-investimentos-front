@@ -81,7 +81,7 @@ class Comparacao extends Component {
         if (dataInicial !== undefined && periodicidade !== undefined && 
             qtdPeriodos !== undefined && qtdPeriodos.trim() !== "") {
             dataFinal = this.atualizarDataFinal(dataInicial, periodicidade, qtdPeriodos);
-            console.log("handleChangePeriodo dados validos dataFinal: " + dataFinal);
+            console.log("handleChangePeriodo dados válidos dataFinal: " + dataFinal);
             this.props.investimentosList.map( 
                 (investimento, indice) => {
                     if (investimento !== undefined) {
@@ -147,7 +147,7 @@ class Comparacao extends Component {
                     <div className="form-row align-items-center justify-content-center">
                         <div className="col-auto">
                             <label htmlFor="dataInicial">Valor a investir</label>
-                            <input type="text" className="form-control form-control-sm text-right" id="valInvestimentoInicial" name="valInvestimentoInicial" placeholder="5.000,00" onChange={this.handleChange} value={this.state.valInvestimentoInicial} required />
+                            <input type="text" className="form-control form-control-sm text-right" id="valInvestimentoInicial" name="valInvestimentoInicial" placeholder="1.000,00" onChange={this.handleChange} value={this.state.valInvestimentoInicial} required />
                             <div className="invalid-feedback">
                                 Por favor informe o valor inicial do investimento.
                             </div>
@@ -219,7 +219,14 @@ class Comparacao extends Component {
         return (
             <div>
                 <div className="card ">
-                   Carregando...
+                    <div className="card-header">
+                       Carregando...
+                    </div>
+                    <div className="card-body d-flex align-items-center justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Carregando...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

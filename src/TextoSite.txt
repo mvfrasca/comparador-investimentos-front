@@ -1,0 +1,9 @@
+* Para o cálculo de retorno líquido no período dos títulos foram considerados somente dias úteis.
+
+* Para títulos atrelados ao CDI utilizamos a expectativa da [Anbima](http://www.anbima.com.br/est_termo/CZ.asp) do dia 30/05/2019.
+
+* Para títulos atrelados a inflação utilizamos a curva futura do IPCA da [Anbima](http://www.anbima.com.br/est_termo/CZ.asp) do dia 30/05/2019.
+
+* Para o cálculo do imposto de renda sobre os rendimentos foi utilizada a tabela que pode ser vista no link 
+
+* As informações fornecidas são baseadas em simulações e os resultados reais poderão ser significativamente diferentes. A Easynvest não se responsabiliza por danos oriundos de erros, omissões ou alterações nos fatores de mercado nem pelo uso das informações aqui contidas. As informações aqui apresentadas não pretendem conter todos os fatos relevantes que um investidor deve considerar e, dessa forma, representam apenas uma visão limitada do mercado. Antes de investir, analise atentamente os benefícios e riscos de cada aplicação. A responsabilidade pela decisão de investimento é do Investidor e não da Easynvest.

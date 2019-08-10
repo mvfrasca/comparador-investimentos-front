@@ -116,13 +116,14 @@ class Investimento extends Component {
     renderLoading() {
         return (
             <div>
-                <div className="card ">
+                <div className="card " style={{minWidth:"250px"}}>
                     <div className="card-header">
-                        { this.state.tipoInvestimento } { this.state.indexador } + { this.state.taxa } %
+                       Carregando...
                     </div>
-                    <div className="card-body">Carregando...</div>
-                    <div className="card-footer text-center">
-                        <button type="button" className="btn btn-primary racinput1" onClick={this.btnAlterarInvestimento_Click}>Alterar Investimento</button>
+                    <div className="card-body d-flex align-items-center justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Carregando...</span>
+                        </div>
                     </div>
                 </div>
             </div>
