@@ -121,8 +121,8 @@ class Investimento extends Component {
                        Carregando...
                     </div>
                     <div className="card-body d-flex align-items-center justify-content-center">
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only">Carregando...</span>
+                        <div className="spinner-border" role="status">
+                            <span className="sr-only">Carregando...</span>
                         </div>
                     </div>
                 </div>

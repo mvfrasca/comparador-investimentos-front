@@ -60,21 +60,21 @@ export function consultarInvestimentos() {
                 {
                     id: 0,
                     tipoInvestimento: "poupanca",
-                    valInvestimentoInicial: 25000,
+                    valInvestimentoInicial: 1000,
                     indexador: "poupanca",
                     taxa: 0,
-                    dataInicial: "2014-09-01",
-                    dataFinal: "2018-09-01",
+                    dataInicial: "2018-01-01",
+                    dataFinal: "2018-12-31",
                     status: StatusEnum.A_CALCULAR
                 },
                 {
                     id: 1,
                     tipoInvestimento: "cdb",
-                    valInvestimentoInicial: 25000,
+                    valInvestimentoInicial: 1000,
                     indexador: "ipca",
                     taxa: 5.57,
-                    dataInicial: "2014-09-01",
-                    dataFinal: "2018-09-01",
+                    dataInicial: "2018-01-01",
+                    dataFinal: "2018-12-31",
                     status: StatusEnum.A_CALCULAR
                 }
             ]
