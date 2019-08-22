@@ -11,7 +11,7 @@ import './Comparacao.css'
 class Comparacao extends Component {
     constructor(props) {
         super(props);
-        let dataInicial = 
+        // let dataInicial = 
         this.state = {
             valInvestimentoInicial: "1.000,00",
             // dataInicial: new Date().toISOString().substring(0,10),
