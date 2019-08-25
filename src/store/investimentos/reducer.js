@@ -33,6 +33,7 @@ const initialState = Immutable({
         },
     ],
     indexadores: [],
+    evolucao: [],
 });
 
 export default function reduce(state = initialState, action = {}) {
@@ -59,11 +60,19 @@ export default function reduce(state = initialState, action = {}) {
             return state.merge({
                 investimentosList: newInvestimentosList
             });
+        case types.ATUALIZAR_EVOLUCAO:
+            console.log("case types.ATUALIZAR_EVOLUCAO: " + JSON.stringify(action.evolucao));
+            console.log("reducer.reduce case types.ATUALIZAR_EVOLUCAO");
+            state.set({evolucao: []});
+            return state.merge({
+                evolucao: action.evolucao
+            });
         default:
             // console.log("case default: " + JSON.stringify(action));
             return state;
     }
 }
+
 
 // selectors
 

@@ -21,11 +21,57 @@ export function calcularInvestimento(investimentoCalcular) {
                 // console.log("investimentos.actions.calcularInvestimento investimento: " + JSON.stringify(investimento))
                 // console.log("investimentos.actions.calcularInvestimento investimentosList[id]: " + JSON.stringify(newInvestimentosList))
                 dispatch({ type: types.ATUALIZAR_INVESTIMENTO, investimento: investimentoCalculado });
+                let evolucoes = atualizarEvolucoes(getState);
+                dispatch({ type: types.ATUALIZAR_EVOLUCAO, evolucao: evolucoes });
             }
         } catch (error) {
             console.error(error);
         }
     };
+}
+
+export function atualizarEvolucoes(getState) {
+    try {
+        let evolucoes = [];
+        getState().investimentos.investimentosList.map( 
+            investimento => {
+                let evolucao = [[{ type: 'date', label: 'Data' }, investimento.tipoInvestimento.toUpperCase() + ' - ' + investimento.indexador ]];
+                investimento.evolucao.map(
+                    atualizacao => {
+                        evolucao.push([new Date(atualizacao.data), atualizacao.valor]);
+                    }
+                )
+                evolucoes = _.union(evolucoes, evolucao);
+            }
+        )
+        console.log("evolucoes: " + JSON.stringify(evolucoes));
+        evolucoes = _.flatMapDepth(_.groupBy(evolucoes, item => item[0]), pivotar);
+        console.log("evolucoes flatMap:" + JSON.stringify(evolucoes));
+        return evolucoes;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+function pivotar(item){
+    let result = [item[0][0]];
+    item.map( 
+        subItem => {
+            result.push(subItem[1]);
+        }
+    )
+    return [result];
+}
+
+export function atualizarEvolucao() {
+    return async (dispatch, getState) => {
+        try {
+            let evolucoes = atualizarEvolucoes();
+            dispatch({ type: types.ATUALIZAR_EVOLUCAO, evolucao: evolucoes });
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 export function atualizarInvestimento(investimentoAtualizar) {

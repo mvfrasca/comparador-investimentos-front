@@ -6,6 +6,7 @@ import Investimento from './../components/Investimento/Investimento';
 import * as investimentosActions from '../store/investimentos/actions';
 import { StatusEnum } from '../constants/base';
 import './Comparacao.css'
+import Chart from 'react-google-charts';
 // import * as investimentosSelectors from '../store/investimentos/reducer';
 
 class Comparacao extends Component {
@@ -44,6 +45,10 @@ class Comparacao extends Component {
 
     atualizarInvestimento(investimento) {
         this.props.dispatch(investimentosActions.atualizarInvestimento(investimento));
+    }
+
+    atualizarEvolucao() {
+        this.props.dispatch(investimentosActions.atualizarEvolucao());
     }
 
     atualizaInvestimentos(dataInicial, periodicidade, qtdPeriodos, dataFinal) {
@@ -212,7 +217,7 @@ class Comparacao extends Component {
                                     </form>
                                 </div>
                                 <div className="card-footer d-flex align-items-center justify-content-center">
-                                    <button type="button" className="btn btn-success justify-content-right" onClick={() => this.atualizaInvestimentos(this.state.dataInicial, this.state.periodicidade, this.state.qtdPeriodos, this.state.dataFinal)}>
+                                    <button type="button" className="btn btn-success justify-content-right mr-4" onClick={() => this.atualizaInvestimentos(this.state.dataInicial, this.state.periodicidade, this.state.qtdPeriodos, this.state.dataFinal)}>
                                         <i className="fas fa-calculator"> Calcular</i> 
                                     </button>
                                 </div>
@@ -233,8 +238,45 @@ class Comparacao extends Component {
                                 )
                             }
                         </div>
+                        <div className="card" style={{minWidth:"250px"}}>
+                            <div className="card-header">
+                                Histórico de índices:
+                            </div>
+                            
+                            <ul className="list-group list-group-flush">
+                                <br/>
+                                <Chart
+                                    chartType="Line"
+                                    width={'100%'}
+                                    // height={'500'}
+                                    data={this.props.evolucao}
+                                    options={{
+                                        chartArea: {
+                                            width: '100%',
+                                        },
+                                        title: 'Histórico de Índices',
+                                        // width: 900,
+                                        // height: 200,
+                                        // series: {
+                                        //     // Gives each series an axis name that matches the Y-axis below.
+                                        //     0: { axis: 'Selic' },
+                                        //     1: { axis: 'CDI' },
+                                        // },
+                                        // axes: {
+                                        //     // Adds labels to each axis; they don't have to match the axis names.
+                                        //     y: {
+                                        //     Selic: { label: '%' },
+                                        //     CDI: { label: 'CDI' },
+                                        //     },
+                                        // },
+                                    }}
+                                    rootProps={{ 'data-testid': '1' }}
+                                />
+                            </ul>
+                        </div>
                     </div>
                 </div>
+                <p/>
             </div>
         )
 
@@ -264,11 +306,12 @@ class Comparacao extends Component {
 }
 
 function mapStateToProps(state) {
-    // console.log("mapStateToProps state: " + JSON.stringify(state))
+    console.log("mapStateToProps state: " + JSON.stringify(state.investimentos.evolucao))
     console.log("Comparacao.mapStateToProps")
     return {
         investimentosList: state.investimentos.investimentosList,
         indexadores: state.investimentos.indexadores,
+        evolucao: state.investimentos.evolucao,
     };
 }
 
@@ -305,7 +348,8 @@ Comparacao.propTypes = {
         periodicidade: PropTypes.string,
         qtd_regs_ult_atualiz: PropTypes.number,
         serie: PropTypes.string
-    }))
+    })),
+    evolucao: PropTypes.Array,
 }
 
 export default connect(mapStateToProps)(Comparacao);

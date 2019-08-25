@@ -17,7 +17,7 @@ export function consultarIndices() {
                 }
             )
             indices.map( 
-                (indice, i) => {
+                indice => {
                     historicoIndices.push([new Date(indice.dt_referencia), indice.val_indice])
                 }
             )
