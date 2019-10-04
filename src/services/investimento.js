@@ -6,7 +6,7 @@ class InvestimentoService {
         // console.log("investimentoService " + JSON.stringify(investimento))
         console.log("investimentoService.calcularInvestimento");
         return fetch(
-            `${URL_API}/investimento?tipoInvestimento=${investimento.tipoInvestimento}&valor=${investimento.valInvestimentoInicial}&indexador=${investimento.indexador}&taxa=${investimento.taxa}&dataInicial=${investimento.dataInicial}&dataFinal=${investimento.dataFinal}`)
+            `${URL_API}/investimento?tipoInvestimento=${investimento.tipoInvestimento}&tipoRendimento=${investimento.tipoRendimento}&valor=${investimento.valInvestimentoInicial}&indexador=${investimento.indexador}&taxa=${investimento.taxa}&taxaPrefixada=${investimento.taxaPrefixada}&dataInicial=${investimento.dataInicial}&dataFinal=${investimento.dataFinal}`)
             .then(resultado => resultado.json().then(dados => dados.body.resultadoInvestimento));
     }
 

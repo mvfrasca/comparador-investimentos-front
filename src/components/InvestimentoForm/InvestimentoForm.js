@@ -22,9 +22,11 @@ class InvestimentoForm extends Component {
             investimento: {
                 id: props.investimento.id,
                 tipoInvestimento: props.investimento.tipoInvestimento,
+                tipoRendimento: props.investimento.tipoRendimento,
                 valorInvestimentoInicial: props.investimento.valorInvestimentoInicial,
                 indexador: props.investimento.indexador,
                 taxa: props.investimento.taxa,
+                taxaPrefixada: props.investimento.taxaPrefixada,
                 dataInicial: props.investimento.dataInicial,
                 dataFinal: props.investimento.dataFinal,
             }
@@ -88,6 +90,18 @@ class InvestimentoForm extends Component {
                                     </div>
                                 </div>
                                 <div className="col-md-4 mb-3">
+                                    <label htmlFor="tipoRendimento">Tipo de Investimento</label>
+                                    <select className="custom-select d-block w-100 align-baseline" id="tipoRendimento" name="tipoRendimento" onChange={this.handleChange} value={this.state.investimento.tipoRendimento} required>
+                                        <option value="">Selecione...</option>
+                                        <option value="pos">Pós-fixado</option>
+                                        <option value="pre">Pré-fixado</option>
+                                        <option value="hibrido">Híbrido</option>
+                                    </select>
+                                    <div className="invalid-feedback">
+                                        Por favor selecione um tipo de rendimento.
+                                    </div>
+                                </div>
+                                <div className="col-md-4 mb-3">
                                     <label htmlFor="indexador">Indexador</label>
                                     <select className="custom-select d-block w-100 align-baseline" id="indexador" name="indexador" onChange={this.handleChange} value={this.state.investimento.indexador} required>
                                     {/* <option name="indexador" value="">Selecione...</option> */}
@@ -107,7 +121,14 @@ class InvestimentoForm extends Component {
                                     <label htmlFor="taxa">Taxa</label>
                                     <input type="text" className="form-control align-baseline" id="taxa" name="taxa" placeholder="" onChange={this.handleChange} value={this.state.investimento.taxa} required />
                                     <div className="invalid-feedback">
-                                        Por favor informe a taxa do investimento.
+                                        Por favor informe a taxa sobre o indexador.
+                                    </div>
+                                </div>
+                                <div className="col-md-4 mb-3">
+                                    <label htmlFor="taxaPrefixada">Taxa Pré-fixada</label>
+                                    <input type="text" className="form-control align-baseline" id="taxaPrefixada" name="taxaPrefixada" placeholder="" onChange={this.handleChange} value={this.state.investimento.taxaPrefixada} required />
+                                    <div className="invalid-feedback">
+                                        Por favor informe a taxa préfixada do investimento.
                                     </div>
                                 </div>
                             </div>
@@ -269,9 +290,11 @@ InvestimentoForm.propTypes = {
     investimento: PropTypes.shape({
         id: PropTypes.number.isRequired,
         tipoInvestimento: PropTypes.string.isRequired,
+        tipoRendimento: PropTypes.string.isRequired,
         valInvestimentoInicial: PropTypes.number.isRequired,
         indexador: PropTypes.string.isRequired,
         taxa: PropTypes.number,
+        taxaPrefixada: PropTypes.number,
         dataInicial: PropTypes.string.isRequired,
         dataFinal: PropTypes.string.isRequired,
         status: PropTypes.number.isRequired,

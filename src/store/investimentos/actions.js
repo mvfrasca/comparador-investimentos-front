@@ -38,7 +38,7 @@ export function atualizarEvolucoes(getState) {
                 let evolucao = [[{ type: 'date', label: 'Data' }, investimento.tipoInvestimento.toUpperCase() + ' - ' + investimento.indexador ]];
                 investimento.evolucao.map(
                     atualizacao => {
-                        evolucao.push([new Date(atualizacao.data), atualizacao.valor]);
+                        evolucao.push([new Date(atualizacao.dtReferencia), atualizacao.valIndice]);
                     }
                 )
                 evolucoes = _.union(evolucoes, evolucao);
@@ -106,9 +106,11 @@ export function consultarInvestimentos() {
                 {
                     id: 0,
                     tipoInvestimento: "poupanca",
+                    tipoRendimento: "pos",
                     valInvestimentoInicial: 1000,
                     indexador: "poupanca",
-                    taxa: 0,
+                    taxa: 100,
+                    taxaPrefixada: 0,
                     dataInicial: "2018-01-01",
                     dataFinal: "2018-12-31",
                     status: StatusEnum.A_CALCULAR
@@ -116,9 +118,11 @@ export function consultarInvestimentos() {
                 {
                     id: 1,
                     tipoInvestimento: "cdb",
+                    tipoRendimento: "pos",
                     valInvestimentoInicial: 1000,
-                    indexador: "ipca",
-                    taxa: 5.57,
+                    indexador: "selic",
+                    taxa: 100,
+                    taxaPrefixada: 0,
                     dataInicial: "2018-01-01",
                     dataFinal: "2018-12-31",
                     status: StatusEnum.A_CALCULAR
@@ -136,6 +140,7 @@ export function consultarIndexadores() {
         try {
             console.log("investimentos.actions.consultarIndexadores");
             let indexadores = await investimentoService.getIndexadores();
+            indexadores = _.filter(indexadores, {"periodicidade": "Diário"})
             indexadores = indexadores.sort(
                 function(a, b){
                     if(a.nome < b.nome) { return -1; }

@@ -8,18 +8,20 @@ const initialState = Immutable({
         {
             id: 0,
             tipoInvestimento: "",
+            tipoRendimento: "",
             valInvestimentoInicial: 0,
             indexador: "",
             taxa: 0,
+            taxaPrefixada: 0,
             dataInicial: "",
             dataFinal: "",
             status: StatusEnum.CALCULADO,
             // Resultado do investimento
             evolucao: [
                 // {
-                //     data: "",           // 2014-09-01
-                //     indice: 0,          // 1.0227221543640934
-                //     valor: 0,           // 25255.68
+                //     dtReferencia: "",           // 2014-09-01
+                //     valIndice: 0,          // 1.0227221543640934
+                //     valSaldoBruto: 0,           // 25255.68
                 // }
             ],
             percIOF: 0,

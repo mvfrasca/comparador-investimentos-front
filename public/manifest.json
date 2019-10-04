@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "CompInvest",
+  "name": "Comparador de Investimentos",
   "icons": [
     {
       "src": "favicon.ico",

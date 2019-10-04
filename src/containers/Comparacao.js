@@ -87,41 +87,57 @@ class Comparacao extends Component {
 
     handleChangePeriodo = (e) => {
         const { target: { name, value } } = e;
-        console.log("handleChangePeriodo name: " + name)
-        console.log("handleChangePeriodo value: " + value)
-
-        let dataInicial = typeof(this.state.dataInicial) === "object" ? this.state.dataInicial.toString() : this.state.dataInicial
-        let periodicidade = typeof(this.state.periodicidade) === "object" ? this.state.periodicidade.toString() : this.state.periodicidade
-        let qtdPeriodos = typeof(this.state.qtdPeriodos) === "object" ? this.state.qtdPeriodos.toString() : this.state.qtdPeriodos
-        let dataFinal = typeof(this.state.dataFinal) === "object" ? this.state.dataFinal.toString() : this.state.dataFinal
-        switch (name) {
-            case "dataInicial":
-                dataInicial = value
-                break;
-            case "periodicidade":
-                periodicidade = value
-                break;
-            case "qtdPeriodos":
-                qtdPeriodos = value
-                break;
+        console.log("handleChangePeriodo name: " + name);
+        console.log("handleChangePeriodo value: " + value);
+        try{
+            let dataInicial = typeof(this.state.dataInicial) === "object" ? this.state.dataInicial.toString() : this.state.dataInicial
+            let periodicidade = typeof(this.state.periodicidade) === "object" ? this.state.periodicidade.toString() : this.state.periodicidade
+            let qtdPeriodos = typeof(this.state.qtdPeriodos) === "object" ? this.state.qtdPeriodos.toString() : this.state.qtdPeriodos
+            let dataFinal = typeof(this.state.dataFinal) === "object" ? this.state.dataFinal.toString() : this.state.dataFinal
+            switch (name) {
+                case "dataInicial":
+                    dataInicial = value
+                    break;
+                case "periodicidade":
+                    periodicidade = value
+                    break;
+                case "qtdPeriodos":
+                    qtdPeriodos = value
+                    break;
+            }
+            console.log("handleChangePeriodo dataInicial: " + dataInicial);
+            console.log("handleChangePeriodo dataInicial tipo: " + typeof(dataInicial));
+            console.log("handleChangePeriodo periodicidade: " + periodicidade);
+            console.log("handleChangePeriodo periodicidade tipo: " + typeof(periodicidade));
+            console.log("handleChangePeriodo qtdPeriodos: " + qtdPeriodos);
+            console.log("handleChangePeriodo qtdPeriodos tipo: " + typeof(qtdPeriodos));
+            console.log("handleChangePeriodo dataFinal: " + dataFinal);
+            
+            if (dataInicial !== undefined && periodicidade !== undefined && 
+                qtdPeriodos !== undefined && qtdPeriodos.trim() !== "") {
+                if (name === "dataFinal"){
+                    periodicidade = 'd';
+                    let diff = new Date(dataFinal).getTime() - new Date(dataInicial).getTime();
+                    qtdPeriodos = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                    this.setState({
+                        periodicidade: periodicidade,
+                        qtdPeriodos: qtdPeriodos,
+                    });
+                } else {
+                    dataFinal = this.atualizarDataFinal(dataInicial, periodicidade, qtdPeriodos);
+                    console.log("handleChangePeriodo dados válidos dataFinal: " + dataFinal);
+                }
+            }
+            this.setState({
+                [name]: [value],
+                dataFinal: dataFinal,
+            });
+        } catch (error) {
+            console.error(error);
+            this.setState({
+                [name]: [value]
+            });
         }
-        console.log("handleChangePeriodo dataInicial: " + dataInicial)
-        console.log("handleChangePeriodo dataInicial tipo: " + typeof(dataInicial))
-        console.log("handleChangePeriodo periodicidade: " + periodicidade)
-        console.log("handleChangePeriodo periodicidade tipo: " + typeof(periodicidade))
-        console.log("handleChangePeriodo qtdPeriodos: " + qtdPeriodos)
-        console.log("handleChangePeriodo qtdPeriodos tipo: " + typeof(qtdPeriodos))
-        console.log("handleChangePeriodo dataFinal: " + dataFinal)
-        
-        if (dataInicial !== undefined && periodicidade !== undefined && 
-            qtdPeriodos !== undefined && qtdPeriodos.trim() !== "") {
-            dataFinal = this.atualizarDataFinal(dataInicial, periodicidade, qtdPeriodos);
-            console.log("handleChangePeriodo dados válidos dataFinal: " + dataFinal);
-        }
-        this.setState({
-            [name]: [value],
-            dataFinal: dataFinal,
-        });
     }
 
     atualizarDataFinal = (dataInicial, periodicidade, qtdPeriodos) => {
@@ -165,14 +181,14 @@ class Comparacao extends Component {
                                 <div className="card-header">
                                     <div className="form-row flex-nowrap">
                                         <div className="col align-middle ">
-                                            <h6>Informe o valor e período de investimento:</h6>
+                                            <h6>Dados do investimento:</h6>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="card-body lista-comprimida">
                                     <br/><br/>
                                     <form name="formDadosInvest" className="needs-validation mb-3" onSubmit={this.atualizaInvestimentos} noValidate>
-                                        <div className="form-row align-items-center justify-content-center">
+                                        <div className="form-row align-items-end justify-content-center">
                                             <div className="col-auto">
                                                 <label className="pt-3" htmlFor="dataInicial">Valor a investir</label>
                                                 <input type="text" className="form-control form-control-sm text-right" id="valInvestimentoInicial" name="valInvestimentoInicial" onChange={this.handleChange} value={this.state.valInvestimentoInicial} required />
@@ -208,18 +224,19 @@ class Comparacao extends Component {
                                             </div>
                                             <div className="col-auto">
                                                 <label className="pt-3" htmlFor="dataFinal">Data do Vencimento</label>
-                                                <input type="date" className="form-control form-control-sm" id="dataFinal" name="dataFinal" onChange={this.handleChange} value={this.state.dataFinal} readOnly/>
+                                                <input type="date" className="form-control form-control-sm" id="dataFinal" name="dataFinal" onChange={this.handleChangePeriodo} value={this.state.dataFinal} required/>
+                                            </div>
+                                            <div className="col-auto">
+                                                <button type="button" className="btn btn-success justify-content-right mr-4" onClick={() => this.atualizaInvestimentos(this.state.dataInicial, this.state.periodicidade, this.state.qtdPeriodos, this.state.dataFinal)}>
+                                                    <i className="fas fa-calculator"> Calcular</i> 
+                                                </button>
                                             </div>
                                         </div>
                                         {/* <hr className="mb-4" /> */}
                                         {/* <button className="btn btn-primary btn-lg btn-block" type="submit" >Atualizar</button> */}
                                         {/* <button className="btn btn-primary btn-lg btn-block" type="button" onClick={() => this.props.onAtualizarInvestimentoRequest(this.state.investimento)}>Atualizar</button> */}
+                                        
                                     </form>
-                                </div>
-                                <div className="card-footer d-flex align-items-center justify-content-center">
-                                    <button type="button" className="btn btn-success justify-content-right mr-4" onClick={() => this.atualizaInvestimentos(this.state.dataInicial, this.state.periodicidade, this.state.qtdPeriodos, this.state.dataFinal)}>
-                                        <i className="fas fa-calculator"> Calcular</i> 
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -243,18 +260,21 @@ class Comparacao extends Component {
                                 Histórico de índices:
                             </div>
                             
-                            <ul className="list-group list-group-flush">
-                                <br/>
+                            <div className="card-body">
                                 <Chart
                                     chartType="Line"
                                     width={'100%'}
-                                    // height={'500'}
+                                    height={'90%'}
                                     data={this.props.evolucao}
+                                    loader={<div class="spinner-border" role="status">
+                                                <span class="sr-only">Carregando...</span>
+                                            </div>}
                                     options={{
                                         chartArea: {
                                             width: '100%',
                                         },
                                         title: 'Histórico de Índices',
+                                        vAxis: { format: '#.###,##'},
                                         // width: 900,
                                         // height: 200,
                                         // series: {
@@ -272,7 +292,7 @@ class Comparacao extends Component {
                                     }}
                                     rootProps={{ 'data-testid': '1' }}
                                 />
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -319,17 +339,19 @@ Comparacao.propTypes = {
     investimentosList: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number.isRequired,
         tipoInvestimento: PropTypes.string.isRequired,
+        tipoRendimento: PropTypes.string.isRequired,
         valInvestimentoInicial: PropTypes.number.isRequired,
         indexador: PropTypes.string.isRequired,
         taxa: PropTypes.number,
+        taxaPrefixada: PropTypes.number,
         dataInicial: PropTypes.string.isRequired,
         dataFinal: PropTypes.string.isRequired,
         status: PropTypes.number.isRequired,
         // Resultado do investimento
         evolucao: PropTypes.arrayOf(PropTypes.shape({
-            data: PropTypes.string.isRequired,
-            indice: PropTypes.number.isRequired,
-            valor: PropTypes.number.isRequired,
+            dtReferencia: PropTypes.string.isRequired,
+            valIndice: PropTypes.number.isRequired,
+            valSaldoBruto: PropTypes.number.isRequired,
         })),
         percIOF: PropTypes.number,
         percImpostoRenda: PropTypes.number,

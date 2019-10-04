@@ -56,7 +56,14 @@ class Investimento extends Component {
                 </div>
                 <div className="card-body lista-comprimida">
                     <ul className="list-group list-group-flush">
-                        <li className="list-group-item text-right">
+                        <li className="list-group-item d-flex justify-content-between lh-condensed">
+                            <div className="text-right">
+                                <h6 className="my-0">                  
+                                    <span className={"my-0 badge badge-".concat(this.props.investimento.id === 1 ? "success" : "danger")}>
+                                        <i className={"far fa-thumbs-".concat(this.props.investimento.id === 1 ? "up" : "down")}></i>
+                                    </span>
+                                </h6>
+                            </div>
                             <div>
                                 <small className="text-muted">Valor Bruto</small>
                                 <h6 className="my-0">{ this.props.investimento.valSaldoBruto.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</h6>
@@ -84,11 +91,12 @@ class Investimento extends Component {
                         </li>
                         <li className="list-group-item d-flex justify-content-between lh-condensed">
                             <div className="text-right">
-                                <h6 className="my-0">                  
-                                    <span className={"my-0 badge badge-".concat(this.props.investimento.id === 1 ? "success" : "danger")}>
-                                        <i className={"far fa-thumbs-".concat(this.props.investimento.id === 1 ? "up" : "down")}></i>
-                                    </span>
-                                </h6>
+                                <small className="text-muted">% Rentabilidade</small>
+                                <h6 className="my-0">{ this.props.investimento.percRentabilidadeLiquida } %</h6>
+                            </div>
+                            <div className="text-right">
+                                <small className="text-muted">% Rentabilidade Anual</small>
+                                <h6 className="my-0">{ this.props.investimento.percRentabilidadeLiquidaAnual } %</h6>
                             </div>
                             <div className="text-right">
                                 <small className="text-muted">Valor Líquido</small>
@@ -118,13 +126,33 @@ class Investimento extends Component {
             <div>
                 <div className="card " style={{minWidth:"250px"}}>
                     <div className="card-header">
-                       Carregando...
+                        <div className="form-row flex-nowrap">
+                            <div className="col align-middle ">
+                                <h6>Carregando...</h6>
+                            </div>
+                            <div className="col-auto">
+                                <button type="button" className="btn justify-content-right" onClick={this.btnAlterarInvestimento_Click}>
+                                    <i className="fas fa-sliders-h"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div className="card-body d-flex align-items-center justify-content-center">
                         <div className="spinner-border" role="status">
                             <span className="sr-only">Carregando...</span>
                         </div>
                     </div>
+                </div>
+                <div>
+                    {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.tipoInvestimento)}
+                    {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.indexador)}
+                    <InvestimentoForm 
+                        modalIsOpen={this.state.modalIsOpen}
+                        closeModal={this.closeModal}
+                        onAtualizarInvestimentoRequest={this.atualizarInvestimento}
+                        investimento={this.props.investimento}
+                        indexadores={this.props.indexadores}
+                    />
                 </div>
             </div>
         );
@@ -135,22 +163,32 @@ Investimento.propTypes = {
     investimento: PropTypes.shape({
         id: PropTypes.number.isRequired,
         tipoInvestimento: PropTypes.string.isRequired,
+        tipoRendimento: PropTypes.string.isRequired,
         valInvestimentoInicial: PropTypes.number.isRequired,
         indexador: PropTypes.string.isRequired,
         taxa: PropTypes.number,
+        taxaPrefixada: PropTypes.number,
         dataInicial: PropTypes.string.isRequired,
         dataFinal: PropTypes.string.isRequired,
         status: PropTypes.number.isRequired,
         // Resultado do investimento
         evolucao: PropTypes.arrayOf(PropTypes.shape({
-            data: PropTypes.string.isRequired,
-            indice: PropTypes.number.isRequired,
-            valor: PropTypes.number.isRequired,
+            dtReferencia: PropTypes.string.isRequired,
+            valIndice: PropTypes.number.isRequired,
+            valSaldoBruto: PropTypes.number.isRequired,
         })),
         percIOF: PropTypes.number,
         percImpostoRenda: PropTypes.number,
         rentabilidadeBruta: PropTypes.number,
+        percRentabilidadeBruta: PropTypes.number,
+        percRentabilidadeBrutaDiaria: PropTypes.number,
+        percRentabilidadeBrutaMensal: PropTypes.number,
+        percRentabilidadeBrutaAnual: PropTypes.number,
         rentabilidadeLiquida: PropTypes.number,
+        percRentabilidadeLiquida: PropTypes.number,
+        percRentabilidadeLiquidaDiaria: PropTypes.number,
+        percRentabilidadeLiquidaMensal: PropTypes.number,
+        percRentabilidadeLiquidaAnual: PropTypes.number,
         valIOF: PropTypes.number,
         valImpostoRenda: PropTypes.number,
         valSaldoBruto: PropTypes.number,
