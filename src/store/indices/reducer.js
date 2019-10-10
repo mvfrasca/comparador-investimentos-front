@@ -13,7 +13,7 @@ export default function reduce(state = initialState, action = {}) {
     switch (action.type) {
         case types.RECEBER_INDICES:
             // console.log("case types.RECEBER_INDICES: " + JSON.stringify(action));
-            console.log("reducer.reduce case types.RECEBER_INDICES");
+            // console.log("reducer.reduce case types.RECEBER_INDICES");
             return state.merge({
                 historicoIndices: action.historicoIndices
             });
@@ -26,6 +26,6 @@ export default function reduce(state = initialState, action = {}) {
 // selectors
 
 export function getHistoricoIndices(state) {
-    console.log("indices.reducer.getHistoricoIndices")
+    // console.log("indices.reducer.getHistoricoIndices")
     return state.historico;
 }

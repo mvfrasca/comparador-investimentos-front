@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import Modal from 'react-modal';
 import PropTypes from 'prop-types';
+import { StatusEnum } from  '../../constants/base';
 
 const customStyles = {
     content: {
@@ -16,34 +17,30 @@ const customStyles = {
 
 class InvestimentoForm extends Component {
     constructor(props) {
-        console.log("InvestimentoForm.constructor")
+        // console.log("InvestimentoForm.constructor")
         super(props);
         this.state = {
             investimento: {
-                id: props.investimento.id,
-                tipoInvestimento: props.investimento.tipoInvestimento,
-                tipoRendimento: props.investimento.tipoRendimento,
-                valorInvestimentoInicial: props.investimento.valorInvestimentoInicial,
-                indexador: props.investimento.indexador,
-                taxa: props.investimento.taxa,
-                taxaPrefixada: props.investimento.taxaPrefixada,
-                dataInicial: props.investimento.dataInicial,
-                dataFinal: props.investimento.dataFinal,
+                ...props.investimento,
             }
         };
 
         // console.log("InvestimentoForm.constructor indexadores: " + JSON.stringify(this.state.indexadores))
-        console.log("InvestimentoForm.constructor");
+        // console.log("InvestimentoForm.constructor");
         autoBind(this);
     }
     
     atualizarInvestimento = (e) => {
-        // console.log("InvestimentoForm.atualizarInvestimento: " + JSON.stringify(e));
         e.preventDefault();
         if (this.props.modalIsOpen) {
             // this.props.dispatch(this.state.indexador);
-            this.props.onAtualizarInvestimentoRequest(this.state.investimento)
-            this.props.closeModal()
+            let investimento = this.state.investimento;
+            if (investimento.status === StatusEnum.A_INCLUIR) {
+                investimento.status = StatusEnum.INCLUINDO;
+            }
+            // console.log("InvestimentoForm.atualizarInvestimento: " + JSON.stringify(investimento));
+            this.props.onAtualizarInvestimentoRequest(investimento);
+            this.props.closeModal();
         }
     }
 
@@ -52,6 +49,12 @@ class InvestimentoForm extends Component {
         const { target: { name, value } } = e;
         var newInvestimento = this.state.investimento;
         newInvestimento[name] = value;
+        if (name === "tipoInvestimento" && value === "poupanca") {
+            newInvestimento.tipoRendimento = "pos"
+            newInvestimento.indexador = "poupanca"
+            newInvestimento.taxa = 100
+            newInvestimento.taxaPrefixada = 0
+        }
         this.setState({
             investimento: newInvestimento
         });
@@ -59,7 +62,7 @@ class InvestimentoForm extends Component {
 
     render() {
         // console.log("InvestimentoForm.render state: " + JSON.stringify(this.state))
-        console.log("InvestimentoForm.render");
+        // console.log("InvestimentoForm.render");
         if (!this.props.modalIsOpen) return(<div/>);
         return (
             <div>
@@ -76,7 +79,7 @@ class InvestimentoForm extends Component {
                         <form className="needs-validation" onSubmit={this.atualizarInvestimento} noValidate>
                         {/* <form className="needs-validation" noValidate> */}
                             <div className="row">
-                                <div className="col-md-4 mb-3">
+                                <div className="col-md-6 mb-3">
                                     <label htmlFor="tipoInvestimento">Tipo de Investimento</label>
                                     <select className="custom-select d-block w-100 align-baseline" id="tipoInvestimento" name="tipoInvestimento" onChange={this.handleChange} value={this.state.investimento.tipoInvestimento} required>
                                         <option value="">Selecione...</option>
@@ -89,48 +92,66 @@ class InvestimentoForm extends Component {
                                         Por favor selecione um tipo de investimento.
                                     </div>
                                 </div>
-                                <div className="col-md-4 mb-3">
-                                    <label htmlFor="tipoRendimento">Tipo de Investimento</label>
-                                    <select className="custom-select d-block w-100 align-baseline" id="tipoRendimento" name="tipoRendimento" onChange={this.handleChange} value={this.state.investimento.tipoRendimento} required>
-                                        <option value="">Selecione...</option>
-                                        <option value="pos">Pós-fixado</option>
-                                        <option value="pre">Pré-fixado</option>
-                                        <option value="hibrido">Híbrido</option>
-                                    </select>
-                                    <div className="invalid-feedback">
-                                        Por favor selecione um tipo de rendimento.
+                                { !["","poupanca"].includes(this.state.investimento.tipoInvestimento) && (
+                                    <div className="col-md-6 mb-3">
+                                        <label htmlFor="tipoRendimento">Tipo de Rendimento</label>
+                                        <select className="custom-select d-block w-100 align-baseline" id="tipoRendimento" name="tipoRendimento" onChange={this.handleChange} value={this.state.investimento.tipoRendimento} required>
+                                            <option value="">Selecione...</option>
+                                            <option value="pos">Pós-fixado</option>
+                                            <option value="pre">Pré-fixado</option>
+                                            <option value="hibrido">Híbrido</option>
+                                        </select>
+                                        <div className="invalid-feedback">
+                                            Por favor selecione um tipo de rendimento.
+                                        </div>
                                     </div>
-                                </div>
+                                )}
+                                {["pos","hibrido"].includes(this.state.investimento.tipoRendimento) && this.state.investimento.tipoInvestimento !== "poupanca" && (
+                                    <div className="col-md-4 mb-3">
+                                        <label htmlFor="taxa">Taxa</label>
+                                        <div className="input-group mb-3">
+                                            <input type="text" className="form-control align-baseline" id="taxa" name="taxa" placeholder="" onChange={this.handleChange} value={this.state.investimento.taxa} required />
+                                            <div className="input-group-append">
+                                                <span className="input-group-text" id="taxa-addon"> % </span>
+                                            </div>
+                                        </div>
+                                        <div className="invalid-feedback">
+                                            Por favor informe a taxa sobre o indexador.
+                                        </div>
+                                    </div>
+                                )}
+                                {["pos","hibrido"].includes(this.state.investimento.tipoRendimento) && this.state.investimento.tipoInvestimento !== "poupanca" && (
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="indexador">Indexador</label>
                                     <select className="custom-select d-block w-100 align-baseline" id="indexador" name="indexador" onChange={this.handleChange} value={this.state.investimento.indexador} required>
-                                    {/* <option name="indexador" value="">Selecione...</option> */}
-                                    {
-                                        this.props.indexadores.map((indexador, indice) => {
-                                            return(
-                                                <option id={"indexador_"+ indice} key={indice} value={indexador.id}>{indexador.nome}</option>
-                                            )
-                                        })
-                                    }
+                                        <option name="indexador" value="">Selecione...</option>
+                                        {
+                                            this.props.indexadores.map((indexador, indice) => {
+                                                return(
+                                                    <option id={"indexador_"+ indice} key={indice} value={indexador.id}>{indexador.nome}</option>
+                                                )
+                                            })
+                                        }
                                     </select>
                                     <div className="invalid-feedback">
                                         Por favor selecione um indexador para o investimento.
                                     </div>
                                 </div>
-                                <div className="col-md-4 mb-3">
-                                    <label htmlFor="taxa">Taxa</label>
-                                    <input type="text" className="form-control align-baseline" id="taxa" name="taxa" placeholder="" onChange={this.handleChange} value={this.state.investimento.taxa} required />
-                                    <div className="invalid-feedback">
-                                        Por favor informe a taxa sobre o indexador.
-                                    </div>
-                                </div>
+                                )}
+                                {["pre","hibrido"].includes(this.state.investimento.tipoRendimento) && this.state.investimento.tipoInvestimento !== "poupanca" && (
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="taxaPrefixada">Taxa Pré-fixada</label>
-                                    <input type="text" className="form-control align-baseline" id="taxaPrefixada" name="taxaPrefixada" placeholder="" onChange={this.handleChange} value={this.state.investimento.taxaPrefixada} required />
+                                    <div className="input-group mb-3">
+                                        <input type="text" className="form-control align-baseline" id="taxaPrefixada" name="taxaPrefixada" placeholder="" onChange={this.handleChange} value={this.state.investimento.taxaPrefixada} required />
+                                        <div className="input-group-append">
+                                            <span className="input-group-text" id="taxaPre-addon"> % </span>
+                                        </div>
+                                    </div>
                                     <div className="invalid-feedback">
                                         Por favor informe a taxa préfixada do investimento.
                                     </div>
                                 </div>
+                                )}
                             </div>
 
                             {/* <div className="row">
@@ -271,8 +292,9 @@ class InvestimentoForm extends Component {
                                     Security code required
                                     </div>
                                 </div> */}
-                            <hr className="mb-4" />
-                            <button className="btn btn-primary btn-lg btn-block" type="submit" >Atualizar</button>
+                            <button className="btn btn-primary btn-lg btn-block" type="submit" >
+                                {this.state.investimento.status === StatusEnum.A_INCLUIR ? "Incluir" : "Atualizar"}
+                            </button>
                             {/* <button className="btn btn-primary btn-lg btn-block" type="button" onClick={() => this.props.onAtualizarInvestimentoRequest(this.state.investimento)}>Atualizar</button> */}
                         </form>
                     </div>
@@ -288,7 +310,7 @@ InvestimentoForm.propTypes = {
     onAtualizarInvestimentoRequest: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
     investimento: PropTypes.shape({
-        id: PropTypes.number.isRequired,
+        id: PropTypes.string.isRequired,
         tipoInvestimento: PropTypes.string.isRequired,
         tipoRendimento: PropTypes.string.isRequired,
         valInvestimentoInicial: PropTypes.number.isRequired,

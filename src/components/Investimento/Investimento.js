@@ -9,7 +9,7 @@ import { StatusEnum } from  '../../constants/base';
 class Investimento extends Component {
     constructor(props){
         // console.log("Investimento.constructor props.investimento.id:" + JSON.stringify(props.investimento === undefined ? "undefined" : props.investimento.id))
-        console.log("Investimento.constructor")
+        // console.log("Investimento.constructor")
         super(props);
         this.state = {
             // Controle do modal
@@ -18,28 +18,53 @@ class Investimento extends Component {
         autoBind(this);
     }
 
-    btnAlterarInvestimento_Click() {
-        console.log("Investimento.btnAlterarInvestimento_Click")
+    btnIncluirInvestimento_Click = e => {
+        e.preventDefault()
+        // console.log("Investimento.btnIncluirInvestimento_Click")
         this.setState({ 
             modalIsOpen: true,
         });
     }
 
+    btnAlterarInvestimento_Click = e => {
+        e.preventDefault()
+        // console.log("Investimento.btnAlterarInvestimento_Click")
+        this.setState({ 
+            modalIsOpen: true,
+        });
+    }
+
+    btnExcluirInvestimento_Click = (e) => {
+        e.preventDefault()
+        // console.log("Investimento.btnExcluirInvestimento_Click" + JSON.stringify(this.props.investimento))
+        this.props.onExcluirInvestimentoRequest(this.props.investimento);
+    }
+
     atualizarInvestimento(investimento) {
         // console.log("Investimento.atualizarInvestimento " + JSON.stringify(investimento))
-        console.log("Investimento.atualizarInvestimento")
+        // console.log("Investimento.atualizarInvestimento")
         this.props.onAtualizarInvestimentoRequest(investimento);
     }
 
     closeModal() {
-        console.log("Investimento.closeModal()");
+        // console.log("Investimento.closeModal()");
         this.setState({ 
             modalIsOpen: false,
         });
     }
 
     render(){
-        if (this.props.investimento === undefined || this.props.investimento.status !== StatusEnum.CALCULADO) return this.renderLoading();
+        if (this.props.investimento === undefined) return this.renderLoading();
+        switch (this.props.investimento.status) {
+            case StatusEnum.CALCULADO:
+                break;
+            case StatusEnum.A_INCLUIR:
+                return this.renderNew();
+            case StatusEnum.INCLUINDO:
+                return this.renderNew();
+            default:
+                return this.renderLoading();
+        }
         return(
             <div className="card" style={{minWidth:"250px"}}>
                 <div className="card-header">
@@ -50,6 +75,11 @@ class Investimento extends Component {
                         <div className="col-auto">
                             <button type="button" className="btn justify-content-right" onClick={this.btnAlterarInvestimento_Click}>
                                 <i className="fas fa-sliders-h"></i>
+                            </button>
+                        </div>
+                        <div className="col-auto">
+                            <button type="button" className="btn justify-content-right" onClick={this.btnExcluirInvestimento_Click}>
+                                <i className="fas fa-trash-alt"></i>
                             </button>
                         </div>
                     </div>
@@ -95,19 +125,25 @@ class Investimento extends Component {
                                 <h6 className="my-0">{ this.props.investimento.percRentabilidadeLiquida } %</h6>
                             </div>
                             <div className="text-right">
-                                <small className="text-muted">% Rentabilidade Anual</small>
-                                <h6 className="my-0">{ this.props.investimento.percRentabilidadeLiquidaAnual } %</h6>
-                            </div>
-                            <div className="text-right">
                                 <small className="text-muted">Valor Líquido</small>
                                 <h6 className="my-0">{ this.props.investimento.valSaldoLiquido.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) }</h6>
+                            </div>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between lh-condensed">
+                            <div className="text-right">
+                                <small className="text-muted">% Rentabilidade Mensal</small>
+                                <h6 className="my-0">{ this.props.investimento.percRentabilidadeLiquidaMensal } %</h6>
+                            </div>
+                            <div className="text-right">
+                                <small className="text-muted">% Rentabilidade Anual</small>
+                                <h6 className="my-0">{ this.props.investimento.percRentabilidadeLiquidaAnual } %</h6>
                             </div>
                         </li>
                     </ul>
                 </div>
                 <div>
-                    {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.tipoInvestimento)}
-                    {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.indexador)}
+                    {/* {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.tipoInvestimento)} */}
+                    {/* {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.indexador)} */}
                     <InvestimentoForm 
                         modalIsOpen={this.state.modalIsOpen}
                         closeModal={this.closeModal}
@@ -135,6 +171,11 @@ class Investimento extends Component {
                                     <i className="fas fa-sliders-h"></i>
                                 </button>
                             </div>
+                            <div className="col-auto">
+                                <button type="button" className="btn justify-content-right" onClick={this.btnExcluirInvestimento_Click}>
+                                    <i className="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div className="card-body d-flex align-items-center justify-content-center">
@@ -144,8 +185,52 @@ class Investimento extends Component {
                     </div>
                 </div>
                 <div>
-                    {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.tipoInvestimento)}
-                    {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.indexador)}
+                    {/* {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.tipoInvestimento)} */}
+                    {/* {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.indexador)} */}
+                    <InvestimentoForm 
+                        modalIsOpen={this.state.modalIsOpen}
+                        closeModal={this.closeModal}
+                        onAtualizarInvestimentoRequest={this.atualizarInvestimento}
+                        investimento={this.props.investimento}
+                        indexadores={this.props.indexadores}
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    renderNew() {
+        return (
+            <div>
+                <div className="card " style={{minWidth:"250px"}}>
+                    <div className="card-header">
+                        <div className="form-row flex-nowrap">
+                            <div className="col align-middle ">
+                                <h6>Novo Investimento</h6>
+                            </div>
+                            <div className="col-auto">
+                                <span className="btn justify-content-right" style={{color: "gray"}}>
+                                    <i className="fas fa-sliders-h"></i>
+                                </span>
+                            </div>
+                            <div className="col-auto">
+                                <span className="btn justify-content-right" style={{color: "gray"}}>
+                                    <i className="fas fa-trash-alt"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="card-body d-flex align-items-center justify-content-center">
+                        <div className="col-auto">
+                            <button type="button" className="btn justify-content-right" onClick={this.btnIncluirInvestimento_Click}>
+                                <i className="fas fa-plus-circle fa-5x"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    {/* {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.tipoInvestimento)} */}
+                    {/* {console.log("Investimento.render InvestimentoForm: " + this.props.investimento.indexador)} */}
                     <InvestimentoForm 
                         modalIsOpen={this.state.modalIsOpen}
                         closeModal={this.closeModal}
@@ -161,7 +246,7 @@ class Investimento extends Component {
 
 Investimento.propTypes = {
     investimento: PropTypes.shape({
-        id: PropTypes.number.isRequired,
+        id: PropTypes.string.isRequired,
         tipoInvestimento: PropTypes.string.isRequired,
         tipoRendimento: PropTypes.string.isRequired,
         valInvestimentoInicial: PropTypes.number.isRequired,

@@ -6,7 +6,7 @@ import indicesService from "../../services/indices";
 export function consultarIndices() {
     return async (dispatch, getState) => {
         try {
-            console.log("indices.actions.consultarIndices");
+            // console.log("indices.actions.consultarIndices");
             let indices = await indicesService.consultarIndices('2018-08-21','2019-08-21');
             let historicoIndices = [[{ type: 'date', label: 'Data' }, 'SELIC']];
             indices = indices.sort(

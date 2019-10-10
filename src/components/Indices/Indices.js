@@ -84,8 +84,8 @@ class Indices extends Component {
 
 
 function mapStateToProps(state) {
-    console.log("mapStateToProps state: " + JSON.stringify(state.indices.historicoIndices))
-    console.log("Indices.mapStateToProps")
+    // console.log("mapStateToProps state: " + JSON.stringify(state.indices.historicoIndices))
+    // console.log("Indices.mapStateToProps")
     return {
         historicoIndices: state.indices.historicoIndices,
     };

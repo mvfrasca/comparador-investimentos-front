@@ -7,6 +7,7 @@ import * as investimentosActions from '../store/investimentos/actions';
 import { StatusEnum } from '../constants/base';
 import './Comparacao.css'
 import Chart from 'react-google-charts';
+import uuid from 'uuid/v4';
 // import * as investimentosSelectors from '../store/investimentos/reducer';
 
 class Comparacao extends Component {
@@ -14,7 +15,7 @@ class Comparacao extends Component {
         super(props);
         // let dataInicial = 
         this.state = {
-            valInvestimentoInicial: "1.000,00",
+            valInvestimentoInicial: 1000,
             // dataInicial: new Date().toISOString().substring(0,10),
             // dataFinal: undefined, //this.atualizarDataFinal(Date.now().toLocaleString('pt-BR', { timeZone: 'UTC' }), "m", 12),
             dataInicial: "2018-01-01",
@@ -26,55 +27,86 @@ class Comparacao extends Component {
     }
 
     componentDidMount() {
-        console.log("Comparacao.componentDidMount - dispatch consultarInvestimentos");
+        // console.log("Comparacao.componentDidMount - dispatch consultarInvestimentos");
         this.props.dispatch(investimentosActions.consultarIndexadores());
         this.props.dispatch(investimentosActions.consultarInvestimentos());
     }
 
-    componentDidUpdate() {
-        this.props.investimentosList.map( 
-            (investimento, indice) => {
-                console.log("Comparacao.componentDidUpdate - dispatch calcularInvestimento " + indice);
-                if (investimento !== undefined) {
-                    this.props.dispatch(investimentosActions.calcularInvestimento(investimento));
-                }
-            }
-        )
-        console.log("Comparacao.componentDidUpdate state.dataFinal: " + this.state.dataFinal)
-    }
+    // componentDidUpdate() {
+    //     // this.props.investimentosList.map( 
+    //     //     (investimento, indice) => {
+    //     //         // console.log("Comparacao.componentDidUpdate - dispatch calcularInvestimento " + indice);
+    //     //         if (investimento !== undefined) {
+    //     //             this.props.dispatch(investimentosActions.calcularInvestimento(investimento));
+    //     //         }
+    //     //     }
+    //     // )
+    //     console.log("Comparacao.componentDidUpdate state: " + JSON.stringify(this.props.investimentosList))
+    // }
 
     atualizarInvestimento(investimento) {
-        this.props.dispatch(investimentosActions.atualizarInvestimento(investimento));
+        // console.log("Comparacao.atualizarInvestimento: " + JSON.stringify(investimento));
+        if (investimento.status === StatusEnum.INCLUINDO) {
+            this.incluirInvestimento();
+        }
+        // this.props.dispatch(investimentosActions.atualizarInvestimento(investimento));
+        this.props.dispatch(investimentosActions.calcularInvestimento(investimento));
+        this.forceUpdate();
+    }
+
+    excluirInvestimento(investimento) {
+        this.props.dispatch(investimentosActions.excluirInvestimento(investimento));
+        this.forceUpdate();
     }
 
     atualizarEvolucao() {
         this.props.dispatch(investimentosActions.atualizarEvolucao());
+        this.forceUpdate();
+    }
+
+    incluirInvestimento() {
+        let investimentoIncluir = {
+            id: uuid(),
+            tipoInvestimento: "",
+            tipoRendimento: "",
+            valInvestimentoInicial: parseFloat(this.state.valInvestimentoInicial.toString().replace(".","").replace(",",".")),
+            indexador: "",
+            taxa: 100,
+            taxaPrefixada: 0,
+            dataInicial: this.state.dataInicial,
+            dataFinal: this.state.dataFinal,
+            status: StatusEnum.A_INCLUIR
+        }
+        this.props.dispatch(investimentosActions.incluirInvestimento(investimentoIncluir));
+        this.forceUpdate();
     }
 
     atualizaInvestimentos(dataInicial, periodicidade, qtdPeriodos, dataFinal) {
-        console.log("Qtd Períodos: " + typeof(qtdPeriodos))
+        // console.log("Qtd Períodos: " + typeof(qtdPeriodos))
         if (dataInicial !== undefined && dataFinal !== undefined && periodicidade !== undefined && 
             qtdPeriodos !== undefined && qtdPeriodos.toString().trim() !== "") {
             
-            console.log("atualizaInvestimentos dados válidos");
+            // console.log("atualizaInvestimentos dados válidos");
             this.props.investimentosList.map( 
                 (investimento, indice) => {
-                    if (investimento !== undefined) {
+                    if (investimento !== undefined && investimento.status !== StatusEnum.A_INCLUIR) {
                         let investimentoAtualizar = {
                             ...investimento,
                             dataInicial: dataInicial,
                             dataFinal: dataFinal,
-                            valInvestimentoInicial: this.state.valInvestimentoInicial.toString().replace(".","").replace(",","."),
+                            valInvestimentoInicial: parseFloat(this.state.valInvestimentoInicial.toString().replace(".","").replace(",",".")),
                         }
-                        console.log("atualizaInvestimentos investimento: " + JSON.stringify(investimentoAtualizar))
-                        this.props.dispatch(investimentosActions.atualizarInvestimento(investimento=investimentoAtualizar));
+                        // console.log("atualizaInvestimentos investimento: " + JSON.stringify(investimentoAtualizar))
+                        // this.props.dispatch(investimentosActions.atualizarInvestimento(investimento=investimentoAtualizar));
+                        this.props.dispatch(investimentosActions.calcularInvestimento(investimento=investimentoAtualizar));
                     }
                 }
             )
+            this.forceUpdate();
         }
         else {
             // TODO: Mensagem de erro
-            console.log("atualizaInvestimentos dados invalidos dataFinal: " + dataFinal);
+            // console.log("atualizaInvestimentos dados invalidos dataFinal: " + dataFinal);
         }
     }
 
@@ -87,8 +119,8 @@ class Comparacao extends Component {
 
     handleChangePeriodo = (e) => {
         const { target: { name, value } } = e;
-        console.log("handleChangePeriodo name: " + name);
-        console.log("handleChangePeriodo value: " + value);
+        // console.log("handleChangePeriodo name: " + name);
+        // console.log("handleChangePeriodo value: " + value);
         try{
             let dataInicial = typeof(this.state.dataInicial) === "object" ? this.state.dataInicial.toString() : this.state.dataInicial
             let periodicidade = typeof(this.state.periodicidade) === "object" ? this.state.periodicidade.toString() : this.state.periodicidade
@@ -105,13 +137,13 @@ class Comparacao extends Component {
                     qtdPeriodos = value
                     break;
             }
-            console.log("handleChangePeriodo dataInicial: " + dataInicial);
-            console.log("handleChangePeriodo dataInicial tipo: " + typeof(dataInicial));
-            console.log("handleChangePeriodo periodicidade: " + periodicidade);
-            console.log("handleChangePeriodo periodicidade tipo: " + typeof(periodicidade));
-            console.log("handleChangePeriodo qtdPeriodos: " + qtdPeriodos);
-            console.log("handleChangePeriodo qtdPeriodos tipo: " + typeof(qtdPeriodos));
-            console.log("handleChangePeriodo dataFinal: " + dataFinal);
+            // console.log("handleChangePeriodo dataInicial: " + dataInicial);
+            // console.log("handleChangePeriodo dataInicial tipo: " + typeof(dataInicial));
+            // console.log("handleChangePeriodo periodicidade: " + periodicidade);
+            // console.log("handleChangePeriodo periodicidade tipo: " + typeof(periodicidade));
+            // console.log("handleChangePeriodo qtdPeriodos: " + qtdPeriodos);
+            // console.log("handleChangePeriodo qtdPeriodos tipo: " + typeof(qtdPeriodos));
+            // console.log("handleChangePeriodo dataFinal: " + dataFinal);
             
             if (dataInicial !== undefined && periodicidade !== undefined && 
                 qtdPeriodos !== undefined && qtdPeriodos.trim() !== "") {
@@ -125,7 +157,7 @@ class Comparacao extends Component {
                     });
                 } else {
                     dataFinal = this.atualizarDataFinal(dataInicial, periodicidade, qtdPeriodos);
-                    console.log("handleChangePeriodo dados válidos dataFinal: " + dataFinal);
+                    // console.log("handleChangePeriodo dados válidos dataFinal: " + dataFinal);
                 }
             }
             this.setState({
@@ -142,9 +174,9 @@ class Comparacao extends Component {
 
     atualizarDataFinal = (dataInicial, periodicidade, qtdPeriodos) => {
         let dataFinal = new Date(dataInicial + ' 12:00:00');
-        console.log("Comparacao.atualizarDataFinal Data Inicial: " + dataInicial);
-        console.log("Comparacao.atualizarDataFinal Periodicidade: " + periodicidade);
-        console.log("Comparacao.atualizarDataFinal Qtd Períodos: " + qtdPeriodos);
+        // console.log("Comparacao.atualizarDataFinal Data Inicial: " + dataInicial);
+        // console.log("Comparacao.atualizarDataFinal Periodicidade: " + periodicidade);
+        // console.log("Comparacao.atualizarDataFinal Qtd Períodos: " + qtdPeriodos);
         switch(periodicidade) {
             case 'd':
                 dataFinal.setDate(dataFinal.getDate() + parseInt(qtdPeriodos));
@@ -156,11 +188,11 @@ class Comparacao extends Component {
                 dataFinal.setYear(dataFinal.getYear() + 1900 + parseInt(qtdPeriodos));
                 break;
             default:
-                console.log("Comparacao.atualizarDataFinal periodicidade inválida")
+                // console.log("Comparacao.atualizarDataFinal periodicidade inválida")
                 return undefined;
         }
-        console.log("Comparacao.atualizarDataFinal Data Final calculada: " + dataFinal)
-        console.log("Comparacao.atualizarDataFinal Data Final formatada: " + dataFinal.toISOString().substring(0,10))
+        // console.log("Comparacao.atualizarDataFinal Data Final calculada: " + dataFinal)
+        // console.log("Comparacao.atualizarDataFinal Data Final formatada: " + dataFinal.toISOString().substring(0,10))
         return dataFinal.toISOString().substring(0,10)
         // document.formDadosInvest.dataFinal.value = dataFinal.toISOString().substring(0,10)
         // this.setState({
@@ -169,7 +201,7 @@ class Comparacao extends Component {
     };
 
     render() {
-        console.log("Comparacao.render")
+        // console.log("Comparacao.render")
         if (this.props.investimentosList === undefined) return this.renderLoading();
         return (
             <div>
@@ -249,6 +281,7 @@ class Comparacao extends Component {
                                                 investimento={investimento}
                                                 indexadores={this.props.indexadores}
                                                 onAtualizarInvestimentoRequest={this.atualizarInvestimento}
+                                                onExcluirInvestimentoRequest={this.excluirInvestimento}
                                             />
                                         )
                                     }
@@ -266,8 +299,8 @@ class Comparacao extends Component {
                                     width={'100%'}
                                     height={'90%'}
                                     data={this.props.evolucao}
-                                    loader={<div class="spinner-border" role="status">
-                                                <span class="sr-only">Carregando...</span>
+                                    loader={<div className="spinner-border" role="status">
+                                                <span className="sr-only">Carregando...</span>
                                             </div>}
                                     options={{
                                         chartArea: {
@@ -326,8 +359,8 @@ class Comparacao extends Component {
 }
 
 function mapStateToProps(state) {
-    console.log("mapStateToProps state: " + JSON.stringify(state.investimentos.evolucao))
-    console.log("Comparacao.mapStateToProps")
+    // console.log("mapStateToProps state: " + JSON.stringify(state.investimentos.investimentosList))
+    // console.log("Comparacao.mapStateToProps")
     return {
         investimentosList: state.investimentos.investimentosList,
         indexadores: state.investimentos.indexadores,
@@ -337,7 +370,7 @@ function mapStateToProps(state) {
 
 Comparacao.propTypes = {
     investimentosList: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.number.isRequired,
+        id: PropTypes.string.isRequired,
         tipoInvestimento: PropTypes.string.isRequired,
         tipoRendimento: PropTypes.string.isRequired,
         valInvestimentoInicial: PropTypes.number.isRequired,
